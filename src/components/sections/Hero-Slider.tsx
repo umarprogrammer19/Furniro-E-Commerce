@@ -1,12 +1,9 @@
 "use client"
+import { useRef, useState } from "react";
 import Slider from "react-slick";
-import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import line from '/public/images/line.png';
-import arrow from '/public/images/arrow.png';
-import sliderBtn from '/public/images/sliderBtn.png';
+import 'slick-carousel/slick/slick.css';
 import { cardCarousel } from './CardCarousel';
-import { useState, useRef } from "react";
 
 const SlickRoomSLider = () => {
     const [currentSlide, setCurrentSlide] = useState(cardCarousel[0].id);

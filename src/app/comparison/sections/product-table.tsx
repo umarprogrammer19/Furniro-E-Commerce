@@ -73,9 +73,9 @@ export default function ComparisonTable() {
       <div className="overflow-x-auto">
         {/* General Section */}
         <div className="mb-8">
-          <h2 className="text-3xl font-bold mb-4">General</h2>
-          <div className="grid grid-cols-3 gap-4">
-            <div>Feature</div>
+          <h2 className="text-2xl md:text-3xl font-bold mb-4">General</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="font-semibold">Feature</div>
             {information.map((_, index) => (
               <div key={index} className="font-semibold">
                 Product {index + 1}
@@ -94,9 +94,9 @@ export default function ComparisonTable() {
 
         {/* Product Section */}
         <div className="mb-8">
-          <h2 className="text-3xl font-bold mb-4">Product</h2>
-          <div className="grid grid-cols-3 gap-4">
-            <div>Feature</div>
+          <h2 className="text-2xl md:text-3xl font-bold mb-4">Product</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="font-semibold">Feature</div>
             {information.map((_, index) => (
               <div key={index} className="font-semibold">
                 Product {index + 1}
@@ -115,9 +115,9 @@ export default function ComparisonTable() {
 
         {/* Dimension Section */}
         <div className="mb-8">
-          <h2 className="text-3xl font-bold mb-4">Dimension</h2>
-          <div className="grid grid-cols-3 gap-4">
-            <div>Feature</div>
+          <h2 className="text-2xl md:text-3xl font-bold mb-4">Dimension</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="font-semibold">Feature</div>
             {information.map((_, index) => (
               <div key={index} className="font-semibold">
                 Product {index + 1}
@@ -136,9 +136,9 @@ export default function ComparisonTable() {
 
         {/* Warranty Section */}
         <div className="mb-8">
-          <h2 className="text-3xl font-bold mb-4">Warranty</h2>
-          <div className="grid grid-cols-3 gap-4">
-            <div>Feature</div>
+          <h2 className="text-2xl md:text-3xl font-bold mb-4">Warranty</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="font-semibold">Feature</div>
             {information.map((_, index) => (
               <div key={index} className="font-semibold">
                 Product {index + 1}

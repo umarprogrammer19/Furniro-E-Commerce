@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import React from "react";
 import MainButton from "../common/MainButton";
 import { useRouter } from "next-nprogress-bar";
+import Link from "next/link";
 
 
 interface IProps {
@@ -34,12 +35,18 @@ function ProductCard({
     {
       iconUrl: "/images/share_icon.png",
       title: "Share",
-      action: () => {},
+      action: () => { },
+    },
+    {
+      iconUrl: "/images/compare.png",
+      title: "Compare",
+      link: "/comparison",
+      action: () => { },
     },
     {
       iconUrl: "/images/like_icon.png",
       title: "Like",
-      action: () => {},
+      action: () => { },
     },
   ];
 
@@ -71,8 +78,8 @@ function ProductCard({
               type === "DISCOUNTED"
                 ? "bg-error "
                 : type === "NEW"
-                ? "bg-success"
-                : ""
+                  ? "bg-success"
+                  : ""
             )}
           >
             {typeValue}
@@ -117,7 +124,7 @@ function ProductCard({
                 <div>
                   <img src={icon.iconUrl} alt="icon" />
                 </div>
-                <p className="text-white">{icon.title}</p>
+                <Link href={icon.link ? icon.link : ""} className="text-white">{icon.title}</Link>
               </div>
             ))}
           </div>

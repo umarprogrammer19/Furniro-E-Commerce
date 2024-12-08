@@ -1,3 +1,14 @@
+export interface Product {
+  id: string;
+  imageUrl: string;
+  title: string;
+  description: string;
+  price: string;
+  otherPrice?: string;
+  type: "DISCOUNTED" | "NEW" | "NORMAL";
+  typeValue?: string;
+}
+
 export const PRODUCTS = [
   {
     id: "10",

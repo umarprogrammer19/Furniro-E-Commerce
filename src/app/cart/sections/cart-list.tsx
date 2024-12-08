@@ -1,5 +1,4 @@
-"use client";
-
+"use client"
 import {
   Table,
   TableBody,
@@ -14,6 +13,13 @@ import CountIncrement from "@/components/sections/count-icrement";
 import { useEffect, useState } from "react";
 import EmptyCartState from "@/components/sections/empty-cart-state";
 import Image from "next/image";
+interface ProductList {
+  id: string;
+  productImageUrl: string;
+  productName: string;
+  quantity: number;
+  unitPrice: number;
+}
 
 export default function CartList() {
   const [cartItems, setCartItems] = useState<ProductList[]>([]);
@@ -23,7 +29,7 @@ export default function CartList() {
     if (storedCart) {
       setCartItems(JSON.parse(storedCart));
     }
-  }, [cartItems]);
+  }, []);  // Only runs on component mount
 
   const updateCart = (updatedCart: ProductList[]) => {
     localStorage.setItem("CART_ITEMS", JSON.stringify(updatedCart));
@@ -67,8 +73,8 @@ export default function CartList() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {cartItems.map((item, index) => (
-            <TableRow key={index} className="hover:bg-transparent">
+          {cartItems.map((item) => (
+            <TableRow key={item.id} className="hover:bg-transparent">
               <TableCell className="font-medium">
                 <div className="flex items-center gap-3">
                   <Image
@@ -81,13 +87,13 @@ export default function CartList() {
                   <div className="flex flex-col">
                     <p>{item.productName}</p>
                     <p className="text-[#9F9F9F] text-xs flex sm:hidden">
-                      Rs: {(item.quantity * item.unitPrice).toLocaleString()}
+                      Rs: {(item.quantity * Number(item.unitPrice)).toLocaleString()}
                     </p>
                   </div>
                 </div>
               </TableCell>
               <TableCell className="text-myBlack hidden sm:table-cell align-middle">
-                Rs: {item.unitPrice.toLocaleString()}
+                Rs: {Number(item.unitPrice).toLocaleString()}
               </TableCell>
               <TableCell>
                 <CountIncrement
@@ -111,12 +117,4 @@ export default function CartList() {
       </Table>
     </section>
   );
-}
-
-interface ProductList {
-  id: string;
-  productImageUrl: string;
-  productName: string;
-  quantity: number;
-  unitPrice: number;
 }

@@ -1,6 +1,7 @@
+import EmptyCart from "@/components/icons/empty-cart";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import EmptyCart from "@/components/icons/empty-cart";
+import { redirect } from "next/navigation";
 
 export default function EmptyCartState() {
   return (
@@ -13,8 +14,9 @@ export default function EmptyCartState() {
         <Button
           asChild
           className="font-white bg-myOrange font-medium hover:bg-[#b88e2fcc]"
+          onClick={() => redirect('/shop')}
         >
-          <Link href={`/shop`}>Add Items</Link>
+          <Link href={"/shop"}>Add Items</Link>
         </Button>
       </div>
     </section>

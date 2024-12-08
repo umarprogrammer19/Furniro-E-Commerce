@@ -7,8 +7,8 @@ import CartSection from "../sections/shop/CartSection";
 
 import { RemoveScroll } from "react-remove-scroll";
 import { useAtomValue } from "jotai";
-import { cartAtom } from "@/storage/jotai";
 import { Badge } from "../ui/badge";
+import { cartAtom } from "@/lib/storage/jotai";
 
 function NavBar() {
   const [showCart, setShowCart] = useState(false);

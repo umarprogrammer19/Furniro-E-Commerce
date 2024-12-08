@@ -13,6 +13,7 @@ import BinIcon from "@/components/icons/bin-icon";
 import CountIncrement from "@/components/sections/count-icrement";
 import { useEffect, useState } from "react";
 import EmptyCartState from "@/components/sections/empty-cart-state";
+import Image from "next/image";
 
 export default function CartList() {
   const [cartItems, setCartItems] = useState<ProductList[]>([]);
@@ -70,9 +71,11 @@ export default function CartList() {
             <TableRow key={index} className="hover:bg-transparent">
               <TableCell className="font-medium">
                 <div className="flex items-center gap-3">
-                  <img
+                  <Image
                     src={item.productImageUrl}
                     alt={item.productName}
+                    width={500}
+                    height={500}
                     className="w-16 h-16 rounded-[7px]"
                   />
                   <div className="flex flex-col">

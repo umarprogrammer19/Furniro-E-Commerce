@@ -13,9 +13,9 @@ import MainButton from "@/components/common/MainButton";
 import { MinusIcon, PlusIcon } from "lucide-react";
 import { PRODUCTS } from "@/lib/constants";
 import { useAtom } from "jotai";
-import { cartAtom } from "@/storage/jotai";
 import { useToast } from "@/components/ui/use-toast";
 import { ToastAction } from "@/components/ui/toast";
+import { cartAtom } from "@/lib/storage/jotai";
 
 export default function ProductDetailShowcaseSection({
   productId,

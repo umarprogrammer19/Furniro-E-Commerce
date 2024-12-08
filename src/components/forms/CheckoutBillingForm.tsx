@@ -3,9 +3,9 @@
 import { useEffect, useState, ChangeEvent, FormEvent } from "react";
 import Countries from "@/lib/json/country.json";
 import makeApiCallService from "@/lib/service/apiService";
-import { billingAtom } from "@/storage/jotai";
 import { useAtom } from "jotai";
 import MainButton from "../common/MainButton";
+import { billingAtom } from "@/lib/storage/jotai";
 
 type BillingInfo = {
   firstName: string;

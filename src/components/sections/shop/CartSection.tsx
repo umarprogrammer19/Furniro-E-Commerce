@@ -2,7 +2,7 @@
 
 import MainButton from "@/components/common/MainButton";
 import { Separator } from "@/components/ui/separator";
-import { cartAtom } from "@/storage/jotai";
+import { cartAtom } from "@/lib/storage/jotai";
 import { useAtom } from "jotai";
 import { useRouter } from "next-nprogress-bar";
 
@@ -95,11 +95,21 @@ export default function CartSection({
         {subTotal ? (
           <div>
             <Separator />
-            <div className="mt-8 flex justify-center">
+            <div className="mt-8 flex justify-center gap-4">
+              <MainButton
+                text="Cart"
+                classes="bg-white hover:bg-white text-black  border border-black rounded-[50px] h-[40px] w-[150px]"
+                action={() => router.push("/cart")}
+              />
               <MainButton
                 text="Checkout"
                 classes="bg-white hover:bg-white text-black  border border-black rounded-[50px] h-[40px] w-[150px]"
                 action={() => router.push("/checkout")}
+              />
+              <MainButton
+                text="Comparison"
+                classes="bg-white hover:bg-white text-black  border border-black rounded-[50px] h-[40px] w-[150px]"
+                action={() => router.push("/comparison")}
               />
             </div>
           </div>

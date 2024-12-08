@@ -4,7 +4,7 @@ import MainButton from "@/components/common/MainButton";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
 import makeApiCallService from "@/lib/service/apiService";
-import { billingAtom, cartAtom } from "@/storage/jotai";
+import { billingAtom, cartAtom } from "@/lib/storage/jotai";
 import { useAtomValue } from "jotai";
 import { useState } from "react";
 

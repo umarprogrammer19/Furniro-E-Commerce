@@ -3,17 +3,35 @@
 import { Button } from "@/components/ui/button";
 import StarIcon from "@/components/icons/star-icon";
 import { Product } from "@/lib/constants";
+import Image from "next/image";
 
-export default function Products({ comparison, setComparison }: any) {
-  function removeFromComparison(id: string) {
-    setComparison((prev: Product[]) => prev.filter((product) => product.id !== id));
+// Props type for Products component
+interface ProductsProps {
+  comparison: Product[];
+  setComparison: React.Dispatch<React.SetStateAction<Product[]>>;
+}
+
+// Props type for ProductCard component
+interface ProductCardProps {
+  product: Product;
+  removeFromComparison: (id: string | number) => void;
+}
+
+export default function Products({ comparison, setComparison }: ProductsProps) {
+  // Function to remove a product from the comparison list
+  function removeFromComparison(id: string | number) {
+    setComparison((prev) => prev.filter((product) => product.id !== id));
   }
 
   return (
     <>
       {comparison.length > 0 ? (
-        comparison.map((product: any, index: number) => (
-          <ProductCard key={index} product={product} removeFromComparison={removeFromComparison} />
+        comparison.map((product, index) => (
+          <ProductCard
+            key={index}
+            product={product}
+            removeFromComparison={removeFromComparison}
+          />
         ))
       ) : (
         <div className="flex items-center justify-center border border-dashed border-[#afafaf] h-[200px] rounded-[10px]">
@@ -24,18 +42,23 @@ export default function Products({ comparison, setComparison }: any) {
   );
 }
 
-function ProductCard({ product, removeFromComparison }: any) {
+function ProductCard({ product, removeFromComparison }: ProductCardProps) {
   return (
     <div className="relative flex flex-col justify-between h-full gap-3 md:col-span-2 lg:col-span-1">
       <p
-        className={`${product.type === "normal" ? "hidden" : "flex"} ${product.type === "DISCOUNTED" ? "p-2 bg-[#E97171]" : "py-2 px-3 bg-[#2EC1AC]"
-          } text-white text-xs font-medium rounded-full absolute top-5 right-5`}
+        className={`${product.type === 'NORMAL' ? "hidden" : "flex"} ${
+          product.type === "DISCOUNTED"
+            ? "p-2 bg-[#E97171]"
+            : "py-2 px-3 bg-[#2EC1AC]"
+        } text-white text-xs font-medium rounded-full absolute top-5 right-5`}
       >
         {product.type === "DISCOUNTED" ? product.typeValue : "New"}
       </p>
-      <img
+      <Image
         src={product.imageUrl}
         alt="Product Image"
+        width={500}
+        height={500}
         className="w-full h-[175px] rounded-[10px]"
       />
       <div className="w-full flex justify-between items-end">

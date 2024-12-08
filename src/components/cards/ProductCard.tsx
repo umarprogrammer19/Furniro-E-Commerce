@@ -7,6 +7,7 @@ import React from "react";
 import MainButton from "../common/MainButton";
 import { useRouter } from "next-nprogress-bar";
 import Link from "next/link";
+import Image from "next/image";
 
 
 interface IProps {
@@ -65,9 +66,11 @@ function ProductCard({
       className="relative"
     >
       <div className="relative">
-        <img
+        <Image
           src={imageUrl}
           alt="product"
+          width={500}
+          height={300}
           className="h-[301px] w-full object-cover"
         />
 
@@ -122,7 +125,7 @@ function ProductCard({
                 onClick={icon.action}
               >
                 <div>
-                  <img src={icon.iconUrl} alt="icon" />
+                  <Image src={icon.iconUrl} alt="icon" width={15} height={15}/>
                 </div>
                 <Link href={icon.link ? icon.link : ""} className="text-white">{icon.title}</Link>
               </div>

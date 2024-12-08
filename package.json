@@ -24,6 +24,7 @@
     "react-dom": "^18",
     "react-remove-scroll": "^2.6.0",
     "react-slick": "^0.30.2",
+    "react-stars": "^2.2.5",
     "slick-carousel": "^1.8.1",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7"

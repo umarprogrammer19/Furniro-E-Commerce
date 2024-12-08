@@ -1,6 +1,7 @@
 import { forwardRef, ReactElement } from "react";
 import { Loader2 } from "lucide-react";
 import { Button } from "../ui/button";
+import Image from "next/image";
 
 type MainButtonProps = {
   text: string;
@@ -50,8 +51,8 @@ const MainButton = forwardRef<HTMLButtonElement, MainButtonProps>(
       size === "normal"
         ? "h-[70px]"
         : size === "large"
-        ? "h-[74px]"
-        : "h-[70px";
+          ? "h-[74px]"
+          : "h-[70px";
 
     const variant_hover =
       variant === "primary" ? "hover:bg-primary" : "hover:bg-secondary";
@@ -59,18 +60,19 @@ const MainButton = forwardRef<HTMLButtonElement, MainButtonProps>(
     return !isLoading ? (
       <Button
         form={form}
-        className={`${
-          isSecondaryVariant ? " text-white  bg-secondary" : "bg-primary"
-        } text-white font-bold  ${propWidth} md:${propWidth}  select-none rounded-[0px] hover:opacity-90 ${variant_hover} ${size_height} ${classes}`}
+        className={`${isSecondaryVariant ? " text-white  bg-secondary" : "bg-primary"
+          } text-white font-bold  ${propWidth} md:${propWidth}  select-none rounded-[0px] hover:opacity-90 ${variant_hover} ${size_height} ${classes}`}
         onClick={!disabled ? action : () => undefined}
         type={isSubmitable ? "submit" : "button"}
         ref={ref}
         disabled={disabled}
       >
         {iconRoute && (
-          <img
+          <Image
             src={iconRoute}
             alt="left button icon"
+            width={30}
+            height={30}
             className="w-[24px] h-[24px]"
           />
         )}
@@ -80,18 +82,19 @@ const MainButton = forwardRef<HTMLButtonElement, MainButtonProps>(
         {text}
         {rightIconRoute && <span>&nbsp;</span>}
         {rightIconRoute && (
-          <img
+          <Image
             src={rightIconRoute}
             alt="right button icon"
+            width={30}
+            height={30}
             className={rightIconClass}
           />
         )}
       </Button>
     ) : (
       <Button
-        className={`bg-primary text-white ${propWidth} md:${propWidth} select-none rounded-[0px] cursor-not-allowed ${size_height} ${
-          classes ? classes : ""
-        }`}
+        className={`bg-primary text-white ${propWidth} md:${propWidth} select-none rounded-[0px] cursor-not-allowed ${size_height} ${classes ? classes : ""
+          }`}
         ref={ref}
         disabled
       >

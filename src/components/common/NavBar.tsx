@@ -9,6 +9,7 @@ import { RemoveScroll } from "react-remove-scroll";
 import { useAtomValue } from "jotai";
 import { Badge } from "../ui/badge";
 import { cartAtom } from "@/lib/storage/jotai";
+import Image from "next/image";
 
 function NavBar() {
   const [showCart, setShowCart] = useState(false);
@@ -69,7 +70,7 @@ function NavBar() {
           <div className="flex justify-between mx-[41px] items-center">
             <Link href="/">
               <div>
-                <img src="/images/logo.png" alt="logo" />
+                <Image src="/images/logo.png" width={150} height={60} alt="logo" />
               </div>
             </Link>
 
@@ -87,10 +88,12 @@ function NavBar() {
             <div className="flex items-center gap-[40px] select-none">
               {icons.map((icon, index) => (
                 <div key={index} className="relative">
-                  <img
+                  <Image
                     src={icon.iconUrl}
                     onClick={icon.action}
                     alt={icon.alt}
+                    width={25}
+                    height={25}
                     className="cursor-pointer"
                   />
                   {icon?.badgeValue ? (
@@ -116,7 +119,7 @@ function NavBar() {
         >
           <div className="flex justify-between mx-[10px]">
             <div className="flex gap-[50px] text-[16px] items-center select-none">
-              <img src="/images/logo.png" alt="logo" className="w-[7rem]" />
+              <Image src="/images/logo.png" alt="logo" width={140} height={100} className="w-[7rem]" />
             </div>
             <div className="flex items-center gap-[40px]">
               {menu ? (
@@ -148,11 +151,13 @@ function NavBar() {
 
                 <div className="flex flex-col gap-[40px] select-none">
                   {icons.map((icon, index) => (
-                    <img
+                    <Image
                       src={icon.iconUrl}
                       onClick={icon.action}
                       alt={icon.alt}
                       key={index}
+                      width={30}
+                      height={30}
                       className="cursor-pointer w-[28px] h-[28px] object-contain"
                     />
                   ))}

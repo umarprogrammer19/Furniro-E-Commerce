@@ -55,7 +55,8 @@ const config: Config = {
 				customGray: "#666666",
 				error: "#E97171",
 				success: "#2EC1AC",
-				customGray2: "#9F9F9F"
+				customGray2: "#9F9F9F",
+				myOrange: "#B88E2F"
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

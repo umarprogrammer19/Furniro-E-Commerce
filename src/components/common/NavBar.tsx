@@ -25,8 +25,8 @@ function NavBar() {
       link: "/shop",
     },
     {
-      title: "About",
-      link: "/about",
+      title: "Blog",
+      link: "/Blog",
     },
     {
       title: "Contact",

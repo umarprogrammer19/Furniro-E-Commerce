@@ -4,14 +4,13 @@ import MainButton from "@/components/common/MainButton";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
 import makeApiCallService from "@/lib/service/apiService";
-import { billingAtom, cartAtom } from "@/lib/storage/jotai";
+import { cartAtom } from "@/lib/storage/jotai";
 import { useAtomValue } from "jotai";
 import { useState } from "react";
 
 function CheckoutDetailSection() {
   const [loading, setLoading] = useState(false);
   const products = useAtomValue(cartAtom);
-  const billing = useAtomValue(billingAtom);
   const { toast } = useToast();
 
   const computeSubTotal = () => {
@@ -23,7 +22,7 @@ function CheckoutDetailSection() {
   };
 
   const handleCheckout = async () => {
-    if (!billing?._id) {
+    if (!true) {
       toast({
         variant: "destructive",
         title: "Empty Billing Info",
@@ -36,7 +35,6 @@ function CheckoutDetailSection() {
     await makeApiCallService("/api/payment", {
       method: "POST",
       body: {
-        billingId: billing?._id,
         products: products.map((product) => {
           return {
             id: product.id,

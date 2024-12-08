@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState, ChangeEvent, FormEvent } from "react";
 import Countries from "@/lib/json/country.json";
 import makeApiCallService from "@/lib/service/apiService";
-import { useAtom } from "jotai";
-import MainButton from "../common/MainButton";
 import { billingAtom } from "@/lib/storage/jotai";
+import { useAtom } from "jotai";
+import { ChangeEvent, FormEvent, useState } from "react";
+import MainButton from "../common/MainButton";
 
 type BillingInfo = {
   firstName: string;
@@ -41,24 +41,6 @@ export function CheckoutBillingForm() {
   });
   const [errors, setErrors] = useState<Errors>({});
 
-  useEffect(() => {
-    if (billingInfo) {
-      setFormData({
-        firstName: billingInfo.firstName || "",
-        lastName: billingInfo.lastName || "",
-        company: billingInfo.company || "",
-        country: billingInfo.country || "",
-        street: billingInfo.street || "",
-        town: billingInfo.town || "",
-        province: billingInfo.province || "",
-        zipCode: billingInfo.zipCode || "",
-        phone: billingInfo.phone || "",
-        email: billingInfo.email || "",
-        additionalInfo: billingInfo.additionalInfo || "",
-      });
-    }
-  }, [billingInfo]);
-
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -90,7 +72,7 @@ export function CheckoutBillingForm() {
       const response = billingInfo
         ? await makeApiCallService("/api/billing", {
           method: "PUT",
-          body: { data: formData, billingId: billingInfo?._id },
+          body: { data: formData, billingId: formData},
         })
         : await makeApiCallService("/api/billing", {
           method: "POST",

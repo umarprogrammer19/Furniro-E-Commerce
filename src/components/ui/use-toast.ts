@@ -32,7 +32,9 @@ function genId() {
   return count.toString()
 }
 
-type ActionType = typeof actionTypes
+type ActionType = typeof actionTypes;
+console.log(actionTypes);
+
 
 type Action =
   | {
@@ -191,4 +193,4 @@ function useToast() {
   }
 }
 
-export { useToast, toast }
+export { toast, useToast }

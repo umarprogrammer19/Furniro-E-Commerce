@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 
 export default function ProductDetailExtraInfoSection() {
@@ -34,16 +35,20 @@ export default function ProductDetailExtraInfoSection() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full mt-[37px]">
         <div className=" flex flex-col bg-primary-light  rounded-[8px] justify-center items-center">
-          <img
+          <Image
             src={"/images/sofa.png"}
             alt="product"
+            width={200}
+            height={200}
             className="w-full object-cover"
           />
         </div>
         <div className=" flex flex-col bg-primary-light  rounded-[8px] justify-center items-center">
-          <img
+          <Image
             src={"/images/sofa.png"}
             alt="product"
+            width={200}
+            height={200}
             className="w-full object-cover"
           />
         </div>

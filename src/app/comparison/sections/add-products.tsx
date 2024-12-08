@@ -1,34 +1,26 @@
 "use client";
 
 import { useState } from "react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import Products from "./compared-products";
+import { Product } from "@/lib/constants"; // Ensure Product type is imported correctly
+import Products from "./compared-products"; // Correct import path for the Products component
 import { PRODUCTS } from "@/lib/constants";
 import Image from "next/image";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
-// Type definition for Product
 export type Products = {
-  id: string | number;
+  id: string;
   title: string;
   imageUrl: string;
-  description?: string;
-  price: string | number; // Allow both string and number
-  otherPrice?: string | number; // Allow both string and number
-  type?: string; // Keep this as a string if it's not constrained
-  typeValue?: string; // Optional propertytional original price for discounted products
+  description: string;
+  price: string | number;
+  otherPrice?: string | number;
+  type?: string;
+  typeValue?: string;
 };
-
-
 export default function AddProducts() {
-  const [comparison, setComparison] = useState<Products[]>([]);
+  const [comparison, setComparison] = useState<Product[]>([]); // Correct state initialization
 
-  // Function to add a product to the comparison list
-  function addToComparison(product: Products) {
+  function addToComparison(product: Product) {
     setComparison((prev) => {
       if (!prev.some((item) => item.id === product.id)) {
         return [...prev, product];
@@ -37,22 +29,16 @@ export default function AddProducts() {
     });
   }
 
-  // Handles the click event when selecting a product
   function handleClick(index: number) {
-    const newProduct: Products = PRODUCTS[index];
+    const newProduct: any = PRODUCTS[index]; // Make sure PRODUCTS is of type Product[]
     addToComparison(newProduct);
   }
 
   return (
     <>
-      {/* Display compared products */}
       <Products comparison={comparison} setComparison={setComparison} />
 
-      {/* Dropdown menu for adding products */}
-      <div
-        className={`${comparison.length === 3 ? "hidden" : "flex"
-          } w-full flex-col gap-1`}
-      >
+      <div className={`${comparison.length === 3 ? "hidden" : "flex"} w-full flex-col gap-1`}>
         <p className="text-xl font-medium">Add a product</p>
 
         <DropdownMenu>
@@ -62,7 +48,7 @@ export default function AddProducts() {
           <DropdownMenuContent className="w-[300px] max-h-[400px] overflow-y-auto">
             {PRODUCTS.map((item, index) => (
               <DropdownMenuItem
-                key={item.id} // Use item.id as the key for better uniqueness
+                key={item.id}
                 className="px-3 flex items-center w-full gap-3"
                 onClick={() => handleClick(index)}
               >
@@ -74,9 +60,7 @@ export default function AddProducts() {
                   className="w-10 h-10 rounded-[3px]"
                 />
                 <div className="flex flex-col">
-                  <p className="text-sm font-semibold leading-none">
-                    {item.title}
-                  </p>
+                  <p className="text-sm font-semibold leading-none">{item.title}</p>
                   <div className="flex items-center gap-2">
                     <p className="text-[#3A3A3A] text-[11px] font-semibold">
                       {"Rs: " + item.price}

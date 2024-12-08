@@ -5,6 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { cartAtom } from "@/lib/storage/jotai";
 import { useAtom } from "jotai";
 import { useRouter } from "next-nprogress-bar";
+import Image from "next/image";
 
 import React, { useEffect, useState } from "react";
 
@@ -34,14 +35,15 @@ export default function CartSection({
 
   useEffect(() => {
     computeSubTotal();
-  }, [products]);
+  }, []);
+
   return (
     <div className="w-[417px] h-[746px] bg-white p-[30px] flex justify-between flex-col">
       <div>
         <div className="flex justify-between items-center mb-[36px]">
           <p className="font-semibold text-[24px]">Shopping Cart</p>
           <div onClick={toggleShowCart} className="hover:cursor-pointer">
-            <img src="/images/cart_alt_icon.png" alt="cart icon" />
+            <Image src="/images/cart_alt_icon.png" alt="cart icon" width={30} height={30} />
           </div>
         </div>
         <Separator />
@@ -52,9 +54,11 @@ export default function CartSection({
               className="flex  items-center gap-[32px] w-full justify-between"
             >
               <div>
-                <img
-                  src={product.productImageUrl}
+                <Image
+                  src={product.productImageUrl!}
                   alt="product image"
+                  width={120}
+                  height={120}
                   className="w-[108px] h-[105px] rounded-[1rem] object-cover"
                 />
               </div>
@@ -73,7 +77,7 @@ export default function CartSection({
                 className="cursor-pointer"
                 onClick={() => removeProductFromCart(product.id)}
               >
-                <img src={"/images/delete_icon.png"} alt="close icon" />
+                <Image src={"/images/delete_icon.png"} alt="close icon" width={30} height={30} />
               </div>
             </div>
           ))}

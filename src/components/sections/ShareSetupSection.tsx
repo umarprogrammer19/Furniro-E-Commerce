@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 
 function ShareSetupSection() {
@@ -10,9 +11,11 @@ function ShareSetupSection() {
         <p className="text-20 text-customGray text-center">#FuniroFurniture</p>
       </div>
       <div className="">
-        <img
+        <Image
           src="/images/share_your_setup.png"
           alt="share setup"
+          width={500}
+          height={500}
           className="w-full"
         />
       </div>

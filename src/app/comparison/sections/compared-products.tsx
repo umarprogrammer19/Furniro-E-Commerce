@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import StarIcon from "@/components/icons/star-icon";
-import { Product } from "@/lib/constants";
+import { Product } from "@/lib/constants"; // Ensure this is imported correctly
 import Image from "next/image";
 
 // Props type for Products component
@@ -65,7 +65,7 @@ function ProductCard({ product, removeFromComparison }: ProductCardProps) {
         <div className="flex flex-col gap-1">
           <div className="flex flex-col">
             <p className="text-xl font-medium">{product.title}</p>
-            <div className={`flex flex-wrap items-center gap-2`}>
+            <div className="flex flex-wrap items-center gap-2">
               <p className="text-[#3A3A3A] text-sm font-semibold">
                 {"Rs: " + product.price}
               </p>

@@ -1,296 +1,188 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { useEffect, useState, ChangeEvent, FormEvent } from "react";
 import Countries from "@/lib/json/country.json";
-import { BillingInfoInputValidation } from "@/lib/validations";
 import makeApiCallService from "@/lib/service/apiService";
-import { useEffect, useState } from "react";
-import MainButton from "../common/MainButton";
 import { billingAtom } from "@/storage/jotai";
 import { useAtom } from "jotai";
+import MainButton from "../common/MainButton";
 
-const FormSchema = BillingInfoInputValidation;
+type BillingInfo = {
+  firstName: string;
+  lastName: string;
+  company?: string;
+  country: string;
+  street: string;
+  town: string;
+  province: string;
+  zipCode: string;
+  phone: string;
+  email: string;
+  additionalInfo?: string;
+};
+
+type Errors = Partial<Record<keyof BillingInfo, string>>;
 
 export function CheckoutBillingForm() {
   const [billingInfo, setBillingInfo] = useAtom(billingAtom);
   const [isLoading, setIsLoading] = useState(false);
-  const [refreshKey, setRefreshKey] = useState(0);
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
-    defaultValues: {
-      firstName: "",
-      lastName: "",
-      company: "",
-      country: "",
-      street: "",
-      town: "",
-      province: "",
-      zipCode: "",
-      phone: "",
-      email: "",
-      additionalInfo: "",
-    },
+  const [formData, setFormData] = useState<BillingInfo>({
+    firstName: "",
+    lastName: "",
+    company: "",
+    country: "",
+    street: "",
+    town: "",
+    province: "",
+    zipCode: "",
+    phone: "",
+    email: "",
+    additionalInfo: "",
   });
-
-  async function onSubmit(data: z.infer<typeof FormSchema>) {
-    setIsLoading(true);
-
-    if (billingInfo) {
-      await makeApiCallService("/api/billing", {
-        method: "PUT",
-        body: { data, billingId: billingInfo?._id },
-      })
-        .then((res) => {
-          // NOTE: Save ID into localStorage => Persisting state
-          setBillingInfo(res?.response?.data);
-          setIsLoading(false);
-        })
-        .catch(() => {
-          setIsLoading(false);
-        });
-    } else {
-      await makeApiCallService("/api/billing", {
-        method: "POST",
-        body: data,
-      })
-        .then((res) => {
-          // NOTE: Save ID into localStorage => Persisting state
-          setBillingInfo(res?.response?.data);
-          setIsLoading(false);
-        })
-        .catch(() => {
-          setIsLoading(false);
-        });
-    }
-  }
+  const [errors, setErrors] = useState<Errors>({});
 
   useEffect(() => {
-    async function fetchBillingInfo() {
-      if (billingInfo) {
-        form.setValue("firstName", billingInfo?.firstName);
-        form.setValue("lastName", billingInfo?.lastName);
-        form.setValue("company", billingInfo?.company);
-        form.setValue("country", billingInfo?.country);
-        form.setValue("street", billingInfo?.street);
-        form.setValue("town", billingInfo?.town);
-        form.setValue("province", billingInfo?.province);
-        form.setValue("zipCode", billingInfo?.zipCode);
-        form.setValue("phone", billingInfo?.phone);
-        form.setValue("email", billingInfo?.email);
-        form.setValue("additionalInfo", billingInfo?.additionalInfo);
-        setRefreshKey(Math.random());
-      }
+    if (billingInfo) {
+      setFormData({
+        firstName: billingInfo.firstName || "",
+        lastName: billingInfo.lastName || "",
+        company: billingInfo.company || "",
+        country: billingInfo.country || "",
+        street: billingInfo.street || "",
+        town: billingInfo.town || "",
+        province: billingInfo.province || "",
+        zipCode: billingInfo.zipCode || "",
+        phone: billingInfo.phone || "",
+        email: billingInfo.email || "",
+        additionalInfo: billingInfo.additionalInfo || "",
+      });
     }
-
-    fetchBillingInfo();
   }, [billingInfo]);
 
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const validateForm = (): boolean => {
+    const newErrors: Errors = {};
+    if (!formData.firstName.trim()) newErrors.firstName = "First name is required.";
+    if (!formData.lastName.trim()) newErrors.lastName = "Last name is required.";
+    if (!formData.country) newErrors.country = "Country is required.";
+    if (!formData.street.trim()) newErrors.street = "Street address is required.";
+    if (!formData.town.trim()) newErrors.town = "Town/City is required.";
+    if (!formData.zipCode.trim()) newErrors.zipCode = "ZIP code is required.";
+    if (!formData.phone.trim()) newErrors.phone = "Phone number is required.";
+    if (!formData.email.trim() || !/\S+@\S+\.\S+/.test(formData.email))
+      newErrors.email = "A valid email address is required.";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+
+    setIsLoading(true);
+
+    try {
+      const response = billingInfo
+        ? await makeApiCallService("/api/billing", {
+          method: "PUT",
+          body: { data: formData, billingId: billingInfo?._id },
+        })
+        : await makeApiCallService("/api/billing", {
+          method: "POST",
+          body: formData,
+        });
+
+      setBillingInfo(response?.response?.data);
+    } catch (error) {
+      console.error("Error saving billing info:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="w-full space-y-6 pb-32"
-      >
-        <p className="font-bold text-[36px]">Billing details</p>
-        <div className="flex gap-[31px] w-full">
-          <div className="flex-grow">
-            <FormField
-              control={form.control}
-              name="firstName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>First Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="" {...field} className="h-[50px]" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-          <div className="flex-grow">
-            <FormField
-              control={form.control}
-              name="lastName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Last Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="" {...field} className="h-[50px]" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-        </div>
+    <form onSubmit={handleSubmit} className="w-full space-y-6 pb-32">
+      <p className="font-bold text-[36px]">Billing details</p>
 
-        <FormField
-          control={form.control}
-          name="company"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Company Name (Optional)</FormLabel>
-              <FormControl>
-                <Input placeholder="" {...field} className="h-[50px]" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          key={refreshKey}
-          control={form.control}
-          name="country"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Country / Region</FormLabel>
-              <FormControl>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select Country" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Countries.map((country, index) => (
-                      <SelectItem key={index} value={country.name}>
-                        {country.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="street"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Street address</FormLabel>
-              <FormControl>
-                <Input placeholder="" {...field} className="h-[50px]" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="town"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Town / City</FormLabel>
-              <FormControl>
-                <Input placeholder="" {...field} className="h-[50px]" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="province"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Province</FormLabel>
-              <FormControl>
-                <Input placeholder="" {...field} className="h-[50px]" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="zipCode"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>ZIP code</FormLabel>
-              <FormControl>
-                <Input placeholder="" {...field} className="h-[50px]" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="phone"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Phone</FormLabel>
-              <FormControl>
-                <Input placeholder="" {...field} className="h-[50px]" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email address</FormLabel>
-              <FormControl>
-                <Input placeholder="" {...field} className="h-[50px]" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="additionalInfo"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Additional Information</FormLabel>
-              <FormControl>
-                <Input placeholder="" {...field} className="h-[50px]" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <div className="mt-6">
-          <MainButton
-            text="Save Billing Info"
-            isSubmitable
-            isLoading={isLoading}
+      <div className="flex gap-[31px] w-full">
+        <div className="flex-grow">
+          <label className="block font-medium mb-1">First Name</label>
+          <input
+            type="text"
+            name="firstName"
+            value={formData.firstName}
+            onChange={handleInputChange}
+            className="h-[50px] w-full"
           />
+          {errors.firstName && <p className="text-red-500">{errors.firstName}</p>}
         </div>
-      </form>
-    </Form>
+
+        <div className="flex-grow">
+          <label className="block font-medium mb-1">Last Name</label>
+          <input
+            type="text"
+            name="lastName"
+            value={formData.lastName}
+            onChange={handleInputChange}
+            className="h-[50px] w-full"
+          />
+          {errors.lastName && <p className="text-red-500">{errors.lastName}</p>}
+        </div>
+      </div>
+
+      <div>
+        <label className="block font-medium mb-1">Company Name (Optional)</label>
+        <input
+          type="text"
+          name="company"
+          value={formData.company}
+          onChange={handleInputChange}
+          className="h-[50px] w-full"
+        />
+      </div>
+
+      <div>
+        <label className="block font-medium mb-1">Country / Region</label>
+        <select
+          name="country"
+          value={formData.country}
+          onChange={handleInputChange}
+          className="h-[50px] w-full"
+        >
+          <option value="">Select Country</option>
+          {Countries.map((country, index) => (
+            <option key={index} value={country.name}>
+              {country.name}
+            </option>
+          ))}
+        </select>
+        {errors.country && <p className="text-red-500">{errors.country}</p>}
+      </div>
+
+      {["street", "town", "province", "zipCode", "phone", "email", "additionalInfo"].map((field) => (
+        <div key={field}>
+          <label className="block font-medium mb-1 capitalize">
+            {field.replace(/([A-Z])/g, " $1")}
+          </label>
+          <input
+            type="text"
+            name={field}
+            value={formData[field as keyof BillingInfo] || ""}
+            onChange={handleInputChange}
+            className="h-[50px] w-full"
+          />
+          {errors[field as keyof Errors] && <p className="text-red-500">{errors[field as keyof Errors]}</p>}
+        </div>
+      ))}
+
+      <div className="mt-6">
+        <MainButton text="Save Billing Info" isSubmitable isLoading={isLoading} />
+      </div>
+    </form>
   );
 }

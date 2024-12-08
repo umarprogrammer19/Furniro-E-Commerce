@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 
 function BrowseTheRangeSection() {
@@ -27,9 +28,11 @@ function BrowseTheRangeSection() {
         {data.map((item, index) => (
           <div key={index}>
             <div>
-              <img
+              <Image
                 src={item.imageUrl}
                 alt="category image"
+                width={500}
+                height={500}
                 className="h-[480px] rounded-[10px] object-cover"
               />
             </div>

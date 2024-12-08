@@ -2,6 +2,7 @@ import React from "react";
 import { Separator } from "../ui/separator";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
+import Image from "next/image";
 
 function FooterSection() {
   const links = [
@@ -47,7 +48,7 @@ function FooterSection() {
       <div className="px-4 md:px-[70px] flex justify-between w-full flex-col md:flex-row gap-8">
         <div>
           <div>
-            <img src="/images/footer_logo.png" alt="footer logo" />
+            <Image src="/images/footer_logo.png" alt="footer logo" width={130} height={100} />
           </div>
           <div className="text-customGray mt-[50px]">
             400 University Drive Suite 200 Coral

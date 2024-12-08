@@ -1,6 +1,4 @@
 import ShopBannerSection from "@/components/sections/shop/ShopBannerSection";
-import CartList from "./sections/cart-list";
-import CartTotals from "./sections/cart-totals";
 import Hero from "@/components/common/Hero";
 
 export default function CartPage() {

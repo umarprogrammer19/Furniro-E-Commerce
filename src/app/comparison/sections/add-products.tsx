@@ -24,8 +24,8 @@ export default function AddProducts() {
   }
 
   function handleClick(index: number) {
-    const newProduct = PRODUCTS[index]; // Get product based on index
-    addToComparison(newProduct); // Add product to comparison
+    const newProduct = PRODUCTS[index];
+    addToComparison(newProduct);
   }
 
   return (
@@ -33,9 +33,8 @@ export default function AddProducts() {
       <Products comparison={comparison} setComparison={setComparison} /> {/* Pass comparison data */}
 
       <div
-        className={`${
-          comparison.length === 3 ? "hidden" : "flex"
-        } w-full flex-col gap-1`}
+        className={`${comparison.length === 3 ? "hidden" : "flex"
+          } w-full flex-col gap-1`}
       >
         <p className="text-xl font-medium">Add a product</p>
 
@@ -59,11 +58,11 @@ export default function AddProducts() {
                   <p className="text-sm font-semibold leading-none">{item.title}</p>
                   <div className="flex items-center gap-2">
                     <p className="text-[#3A3A3A] text-[11px] font-semibold">
-                      {"₦" + item.price}
+                      {"Rs: " + item.price}
                     </p>
                     {item.type === "DISCOUNTED" && (
                       <p className="text-[#B0B0B0] line-through text-[11px]">
-                        {"₦" + item.otherPrice}
+                        {"Rs: " + item.otherPrice}
                       </p>
                     )}
                   </div>

@@ -1,20 +1,34 @@
 "use client";
 
 import { useState } from "react";
-import { PRODUCTS } from "@/lib/constants"; // Import your product list
-import Products from "./compared-products";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import Products from "./compared-products";
+import { PRODUCTS } from "@/lib/constants";
+import Image from "next/image";
+
+// Type definition for Product
+export type Products = {
+  id: string | number;
+  title: string;
+  imageUrl: string;
+  description?: string;
+  price: string | number; // Allow both string and number
+  otherPrice?: string | number; // Allow both string and number
+  type?: string; // Keep this as a string if it's not constrained
+  typeValue?: string; // Optional propertytional original price for discounted products
+};
+
 
 export default function AddProducts() {
-  const [comparison, setComparison] = useState<any[]>([]); // State to manage selected products
+  const [comparison, setComparison] = useState<Products[]>([]);
 
-  function addToComparison(product: any) {
-    // Add product to comparison if not already added
+  // Function to add a product to the comparison list
+  function addToComparison(product: Products) {
     setComparison((prev) => {
       if (!prev.some((item) => item.id === product.id)) {
         return [...prev, product];
@@ -23,15 +37,18 @@ export default function AddProducts() {
     });
   }
 
+  // Handles the click event when selecting a product
   function handleClick(index: number) {
-    const newProduct = PRODUCTS[index];
+    const newProduct: Products = PRODUCTS[index];
     addToComparison(newProduct);
   }
 
   return (
     <>
-      <Products comparison={comparison} setComparison={setComparison} /> {/* Pass comparison data */}
+      {/* Display compared products */}
+      <Products comparison={comparison} setComparison={setComparison} />
 
+      {/* Dropdown menu for adding products */}
       <div
         className={`${comparison.length === 3 ? "hidden" : "flex"
           } w-full flex-col gap-1`}
@@ -45,17 +62,21 @@ export default function AddProducts() {
           <DropdownMenuContent className="w-[300px] max-h-[400px] overflow-y-auto">
             {PRODUCTS.map((item, index) => (
               <DropdownMenuItem
-                key={index}
+                key={item.id} // Use item.id as the key for better uniqueness
                 className="px-3 flex items-center w-full gap-3"
                 onClick={() => handleClick(index)}
               >
-                <img
+                <Image
                   src={item.imageUrl}
                   alt="Product image"
+                  width={100}
+                  height={100}
                   className="w-10 h-10 rounded-[3px]"
                 />
                 <div className="flex flex-col">
-                  <p className="text-sm font-semibold leading-none">{item.title}</p>
+                  <p className="text-sm font-semibold leading-none">
+                    {item.title}
+                  </p>
                   <div className="flex items-center gap-2">
                     <p className="text-[#3A3A3A] text-[11px] font-semibold">
                       {"Rs: " + item.price}

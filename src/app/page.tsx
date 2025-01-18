@@ -3,8 +3,10 @@ import SlickRoomSLider from "@/components/sections/Hero-Slider";
 import HeroSection from "@/components/sections/HeroSection";
 import OurProductSection from "@/components/sections/OurProductSection";
 import ShareSetupSection from "@/components/sections/ShareSetupSection";
+import { fetchData } from "@/utils/importData";
 
-export default function Home() {
+export default async function Home() {
+  // await fetchData();
   return (
     <main className="bg-white">
       <HeroSection />

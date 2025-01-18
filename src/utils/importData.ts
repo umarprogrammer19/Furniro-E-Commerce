@@ -1,6 +1,7 @@
 import { client } from "@/sanity/lib/client";
 
 export const fetchData = async (): Promise<void> => {
+    
     try {
         const res = await fetch("https://template6-six.vercel.app/api/products");
 

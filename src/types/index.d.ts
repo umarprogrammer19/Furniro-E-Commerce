@@ -6,6 +6,17 @@ interface IProduct {
   unitPrice: number;
 }
 
+export interface ImportedData {
+  _id: string;
+  title: string;
+  description: string;
+  price: number;
+  imageUrl: string;
+  dicountPercentage: boolean;
+  isNew: boolean;
+  tags: string[]
+}
+
 interface IResponse {
   response: {
     data: any;

@@ -12,7 +12,7 @@ export interface ImportedData {
   description: string;
   price: number;
   imageUrl: string;
-  dicountPercentage: boolean;
+  dicountPercentage: number;
   isNew: boolean;
   tags: string[]
 }

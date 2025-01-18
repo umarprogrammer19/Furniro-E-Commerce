@@ -39,7 +39,7 @@ function OurProductSection() {
           <ProductCard {...item} key={item._id} />
         ))}
       </div>
-      <div className="flex justify-center mt-[32px]">
+      <div className="flex justify-center my-[32px]">
         <MainButton
           text="Show More"
           classes="bg-transparent hover:bg-transparent text-primary font-bold border border-primary h-[48px]"

@@ -1,7 +1,29 @@
+"use cleint";
+import { client } from "@/sanity/lib/client";
 import Image from "next/image";
-import React from "react";
+import { useParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
 export default function ProductDetailExtraInfoSection() {
+  const { product_id } = useParams();
+  const [desc, setDescription] = useState();
+  useEffect(() => {
+    const fetchDescription = async () => {
+      try {
+        const query = `*[_type == "product"]{_id,description,"imageUrl":imageUrl.asset->url}`;
+        const product = await client.fetch(query);
+        const index = product.findIndex((item: { _id: string }) => item._id == product_id);
+        setDescription(product[index]);
+      } catch (err) {
+        console.log("Error", err);
+      }
+    };
+    fetchDescription();
+  }, []);
+
+  if (!desc) return <h1>Description Does Not Provided</h1>;
+
+  const { description, imageUrl } = desc;
   return (
     <section className="flex flex-col items-center justify-center">
       <div className="flex gap-[53px]">
@@ -17,39 +39,27 @@ export default function ProductDetailExtraInfoSection() {
       </div>
       <div className="mt-[37px] ">
         <p className="text-customGray text-normal">
-          Embodying the raw, wayward spirit of rock &apos;n&apos; roll, the
-          Kilburn portable active stereo speaker takes the unmistakable look and
-          sound of Marshall, unplugs the chords, and takes the show on the road.
-        </p>
-        <p className="text-customGray text-normal mt-[30px]">
-          Weighing in under 7 pounds, the Kilburn is a lightweight piece of
-          vintage styled engineering. Setting the bar as one of the loudest
-          speakers in its class, the Kilburn is a compact, stout-hearted hero
-          with a well-balanced audio which boasts a clear midrange and extended
-          highs for a sound that is both articulate and pronounced. The analogue
-          knobs allow you to fine tune the controls to your personal preferences
-          while the guitar-influenced leather strap enables easy and stylish
-          travel.
+          {description}
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full mt-[37px]">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-[70%] mt-[37px]">
         <div className=" flex flex-col bg-primary-light  rounded-[8px] justify-center items-center">
           <Image
-            src={"/images/sofa.png"}
+            src={imageUrl}
             alt="product"
             width={200}
             height={200}
-            className="w-full object-cover"
+            className="w-full"
           />
         </div>
         <div className=" flex flex-col bg-primary-light  rounded-[8px] justify-center items-center">
           <Image
-            src={"/images/sofa.png"}
+            src={imageUrl}
             alt="product"
             width={200}
             height={200}
-            className="w-full object-cover"
+            className="w-full"
           />
         </div>
       </div>

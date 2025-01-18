@@ -20,7 +20,8 @@ export default function ProductDetailShowcaseSection({
 }) {
   const [quantity, setQuantity] = useState(1)
   const [specificProduct, setSpecificProduct] = useState<ImportedData | null>(null)
-  const [cart, setCart] = useAtom(cartAtom)
+  const [cart, setCart] = useAtom(cartAtom);
+  if (!cart) null;
   const { toast } = useToast()
 
   useEffect(() => {

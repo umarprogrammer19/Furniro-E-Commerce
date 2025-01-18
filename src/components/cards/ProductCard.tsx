@@ -1,20 +1,18 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
-import React from "react";
-import MainButton from "../common/MainButton";
-import Link from "next/link";
-import Image from "next/image";
 import { ImportedData } from "@/types";
+import { motion } from "framer-motion";
+import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import MainButton from "../common/MainButton";
 
 function ProductCard({
   _id,
   title,
   imageUrl,
   price,
-  tags,
   description,
   dicountPercentage,
   isNew,

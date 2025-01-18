@@ -1,4 +1,5 @@
 import { toast } from "@/components/ui/use-toast";
+import { IResponse } from "@/types";
 
 type RequestMethod = "GET" | "POST" | "PUT" | "DELETE";
 

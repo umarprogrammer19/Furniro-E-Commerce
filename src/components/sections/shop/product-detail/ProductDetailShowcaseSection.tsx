@@ -21,8 +21,7 @@ export default function ProductDetailShowcaseSection({
   const [quantity, setQuantity] = useState(1)
   const [specificProduct, setSpecificProduct] = useState<ImportedData | null>(null)
   const [cart, setCart] = useAtom(cartAtom);
-  if (!cart) null;
-  const { toast } = useToast()
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchDataFromSanity = async () => {
@@ -79,7 +78,9 @@ export default function ProductDetailShowcaseSection({
     toast({
       title: 'Added to Cart!',
       description: `${specificProduct.title} added to your cart.`,
-    })
+    });
+
+    console.log(cart);
   }
 
   if (!specificProduct) {

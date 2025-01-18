@@ -1,3 +1,4 @@
+import { IProduct } from "@/types";
 import { atomWithStorage } from "jotai/utils";
 
 const cartAtom = atomWithStorage<IProduct[]>("CART_ITEMS", []);

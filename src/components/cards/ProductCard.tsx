@@ -93,7 +93,7 @@ function ProductCard({
       <div className="bg-[#F4F5F7] p-4">
         <p className="text-customBlack text-24 font-semibold">{title}</p>
         <p className="text-customGray font-medium text-normal py-[8px]">
-          {description}
+          {description.slice(0,120)}...
         </p>
         <div className="flex justify-between items-center">
           <p className="text-customBlack text-20 font-semibold">{price}</p>

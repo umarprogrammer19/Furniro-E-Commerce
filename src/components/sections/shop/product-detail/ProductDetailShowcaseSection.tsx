@@ -1,241 +1,193 @@
-"use client";
+'use client'
 
-import React, { useEffect, useState } from "react";
-import { Separator } from "@/components/ui/separator";
-import ReactStars from "react-stars";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-} from "@/components/ui/pagination";
-import MainButton from "@/components/common/MainButton";
-import { MinusIcon, PlusIcon } from "lucide-react";
-import { PRODUCTS } from "@/lib/constants";
-import { useAtom } from "jotai";
-import { useToast } from "@/components/ui/use-toast";
-import { ToastAction } from "@/components/ui/toast";
-import { cartAtom } from "@/lib/storage/jotai";
+import { useEffect, useState } from 'react'
+import Image from 'next/image'
+import { useAtom } from 'jotai'
+import { MinusIcon, PlusIcon, StarIcon } from 'lucide-react'
+import { useToast } from '@/components/ui/use-toast'
+import { Button } from '@/components/ui/button'
+import { Separator } from '@/components/ui/separator'
+import { cartAtom } from '@/lib/storage/jotai'
+import { client } from '@/sanity/lib/client'
+import { ImportedData } from '@/types'
+
+const MAX_QUANTITY = 5
 
 export default function ProductDetailShowcaseSection({
   productId,
 }: {
-  productId: string;
+  productId: string
 }) {
-  const MAX_QUANTITY = 5;
-
-  const mini = [
-    "/images/sofa_mini.png",
-    "/images/sofa_mini.png",
-    "/images/sofa_mini.png",
-    "/images/sofa_mini.png",
-  ];
-
-  const extraDetailsData = [
-    {
-      item: "SKU",
-      value: "SS001",
-    },
-    {
-      item: "Category",
-      value: "Sofas",
-    },
-    {
-      item: "Tags",
-      value: "Sofa, Chair, Home, Shop",
-    },
-    {
-      item: "Share",
-      value: (
-        <div className="flex gap-[23px]">
-          <div>
-            <img src="/images/facebook.png" alt="facebook" />
-          </div>
-          <div>
-            <img src="/images/linkedin.png" alt="linkedin" />
-          </div>
-          <div>
-            <img src="/images/twitter.png" alt="twitter" />
-          </div>
-        </div>
-      ),
-    },
-  ];
-
-  const [quantity, setQuantity] = useState(1);
-  const [isMounted, setIsMounted] = useState(false);
-  const { toast } = useToast();
-
-  const [cart, setCart] = useAtom(cartAtom);
-
-  const handleQuantityDecrement = () => {
-    if (quantity === 1) return;
-    setQuantity(quantity - 1);
-  };
-  const handleQuantityIncrement = () => {
-    if (quantity === MAX_QUANTITY) return;
-    setQuantity(quantity + 1);
-  };
-
-  const handleAddToCart = () => {
-    const productInCart = cart.find((product) => product.id === productId);
-
-    // NOTE: When we already have the product in the cart [EXISTING PRODUCT]
-    if (productInCart) {
-      let updatedProducts = [];
-      const productObject: IProduct = {
-        id: productId,
-        productImageUrl: productInCart?.productImageUrl,
-        productName: productInCart?.productName,
-        quantity,
-        unitPrice: Number(productInCart?.unitPrice),
-      };
-
-      // NOTE: Remove it from cart & set afresh
-      const filteredProducts = cart.filter(
-        (product) => product.id !== productId
-      );
-
-      updatedProducts = filteredProducts;
-      updatedProducts.push(productObject);
-
-      setCart(updatedProducts);
-    }
-
-    // NOTE: When we dont have the product already in the cart [FRESH PRODUCT]
-    if (!productInCart) {
-      const product = PRODUCTS.find((product) => {
-        return product.id === productId;
-      });
-
-      const productObject: IProduct = {
-        id: productId,
-        productImageUrl: product?.imageUrl,
-        productName: product?.title,
-        quantity,
-        unitPrice: Number(product?.price),
-      };
-      setCart((prevProducts) => [...prevProducts, productObject]);
-    }
-
-    toast({
-      title: "Cat in the Bag :)",
-      description: "Product added to cart successfully",
-      action: <ToastAction altText="Goto schedule to undo">Close</ToastAction>,
-    });
-  };
-
-  const specificProduct = PRODUCTS.find((product) => {
-    return product.id === productId;
-  });
+  const [quantity, setQuantity] = useState(1)
+  const [specificProduct, setSpecificProduct] = useState<ImportedData | null>(null)
+  const [cart, setCart] = useAtom(cartAtom)
+  const { toast } = useToast()
 
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
+    const fetchDataFromSanity = async () => {
+      try {
+        const query = `*[_type == "product" && _id == $productId][0]{
+          _id,
+          title,
+          "imageUrl": imageUrl.asset->url,
+          price,
+          tags,
+          description,
+          discountPercentage,
+          isNew
+        }`
+        const product = await client.fetch(query, { productId })
+        setSpecificProduct(product)
+      } catch (error) {
+        console.error('Error fetching data from Sanity:', error)
+        toast({
+          title: 'Error',
+          description: 'Failed to load product details. Please try again.',
+          variant: 'destructive',
+        })
+      }
+    }
+    fetchDataFromSanity()
+  }, [productId, toast])
 
-  if (!isMounted) {
-    return null;
+  const handleQuantityChange = (increment: number) => {
+    setQuantity((prev) => Math.max(1, Math.min(prev + increment, MAX_QUANTITY)))
+  }
+
+  const handleAddToCart = () => {
+    if (!specificProduct) return
+
+    const productObject = {
+      id: specificProduct._id,
+      productImageUrl: specificProduct.imageUrl,
+      productName: specificProduct.title,
+      quantity,
+      unitPrice: Number(specificProduct.price),
+    }
+
+    setCart((prev) => {
+      const existingProductIndex = prev.findIndex((item) => item.id === productObject.id)
+      if (existingProductIndex !== -1) {
+        const updatedCart = [...prev]
+        updatedCart[existingProductIndex] = productObject
+        return updatedCart
+      }
+      return [...prev, productObject]
+    })
+
+    toast({
+      title: 'Added to Cart!',
+      description: `${specificProduct.title} added to your cart.`,
+    })
+  }
+
+  if (!specificProduct) {
+    return <div className="flex justify-center items-center h-96">Loading product details...</div>
   }
 
   return (
-    <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
-      {/* LHS */}
-      <div className="flex gap-8 ">
-        <div className="hidden md:inline-flex flex-col gap-8">
-          {mini.map((item, index) => (
-            <div
-              key={index}
-              className="bg-primary-light h-[80px] rounded-[8px] inline-flex items-center px-2"
-            >
-              <img src={item} alt="product mini glance" />
-            </div>
-          ))}
-        </div>
-        <div className=" flex flex-col bg-primary-light  rounded-[8px] h-[500px] justify-center items-center">
-          <img
-            src={specificProduct?.imageUrl}
-            alt="product"
-            className="w-[425px] h-[500px] object-cover rounded-[10px]"
-          />
-        </div>
-      </div>
-      {/* RHS */}
-      <div>
-        <p className="text-[42px]">{specificProduct?.title}</p>
-        <p className="text-customGray text-[24px] font-medium">
-          Rs. {specificProduct?.price}
-        </p>
-        <div className="flex items-center gap-[22px]">
-          <ReactStars count={5} color1="#FFC700" size={24} color2={"#FFC700"} />
-          <Separator
-            orientation="vertical"
-            className="h-[40px] border border-customGray2"
-          />
-          <p>5 Customer Review</p>
-        </div>
+    <section className="container mx-auto px-4 py-12">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        {/* Product Images */}
+        <div className="flex gap-6">
+          {/* Thumbnails */}
+          <div className="hidden lg:flex flex-col gap-4">
+            {[...Array(4)].map((_, index) => (
+              <button
+                key={index}
+                className="aspect-square overflow-hidden rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-black"
+              >
+                <Image
+                  src={specificProduct.imageUrl || "/placeholder.svg"}
+                  alt={`Thumbnail ${index + 1}`}
+                  width={80}
+                  height={80}
+                  className="w-full h-full object-cover"
+                />
+              </button>
+            ))}
+          </div>
 
-        <p className="mt-4">
-          Setting the bar as one of the loudest speakers in its class, the
-          Kilburn is a compact, stout-hearted hero with a well-balanced audio
-          which boasts a clear midrange and extended highs for a sound.
-        </p>
-
-        <div>
-          <p className="text-customGray text-[14px] mb-[12px] mt-[22px]">
-            Size
-          </p>
-          <Pagination className="flex !justify-start">
-            <PaginationContent className="flex gap-[38px]">
-              <PaginationItem>
-                <PaginationLink href="" isActive>
-                  L
-                </PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink href="">XL</PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink href="">XS</PaginationLink>
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        </div>
-
-        <div className="flex gap-[18px] items-center mt-32">
-          <div className="inline-flex h-[64px] px-[15px] gap-[35px] items-center border border-customGray2 rounded-[10px]">
-            <MinusIcon
-              className="cursor-pointer"
-              onClick={handleQuantityDecrement}
-            />
-            <p className="font-semibold text-normal select-none">{quantity}</p>
-            <PlusIcon
-              className="cursor-pointer"
-              onClick={handleQuantityIncrement}
+          {/* Main Image */}
+          <div className="aspect-square overflow-hidden rounded-lg bg-gray-100 flex-1">
+            <Image
+              src={specificProduct.imageUrl || "/placeholder.svg"}
+              alt={specificProduct.title}
+              width={600}
+              height={600}
+              className="w-full h-full object-cover"
             />
           </div>
+        </div>
+
+
+        {/* Product Details */}
+        <div className="space-y-6">
           <div>
-            <MainButton
-              text="Add to Cart"
-              classes="bg-white text-black hover:bg-white border border-black rounded-[15px]"
-              action={handleAddToCart}
-            />
+            <h1 className="text-3xl font-bold text-gray-900">{specificProduct.title}</h1>
+            <p className="text-2xl font-semibold text-gray-900 mt-2">
+              $ {Number(specificProduct.price).toLocaleString()}
+            </p>
           </div>
-        </div>
 
-        <div className="my-[41px]">
-          <Separator className="border border-[#D9D9D9]" />
-        </div>
-
-        <div className="flex flex-col gap-4">
-          {extraDetailsData.map((item, index) => (
-            <div key={index} className="flex gap-4">
-              <p className="text-customGray">{item.item}</p>
-              <p className="text-customGray">:</p>
-              <div className="text-customGray">{item.value}</div>
+          {/* Reviews */}
+          <div className="flex items-center space-x-4">
+            <div className="flex">
+              {[...Array(5)].map((_, i) => (
+                <StarIcon key={i} className="w-5 h-5 text-yellow-400 fill-current" />
+              ))}
             </div>
-          ))}
+            <Separator orientation="vertical" className="h-5" />
+            <p className="text-sm text-gray-600">5 Customer Reviews</p>
+          </div>
+
+          {/* Product Description */}
+          <p className="text-gray-700 leading-relaxed">{specificProduct.description.slice(0, 380)}...</p>
+
+          {/* Quantity Selector and Add to Cart */}
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center border border-gray-300 rounded-md">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => handleQuantityChange(-1)}
+                disabled={quantity <= 1}
+                className="text-gray-600 hover:text-gray-900"
+              >
+                <MinusIcon className="h-4 w-4" />
+              </Button>
+              <span className="mx-3 text-lg font-semibold">{quantity}</span>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => handleQuantityChange(1)}
+                disabled={quantity >= MAX_QUANTITY}
+                className="text-gray-600 hover:text-gray-900"
+              >
+                <PlusIcon className="h-4 w-4" />
+              </Button>
+            </div>
+            <Button onClick={handleAddToCart} className="flex-1">
+              Add to Cart
+            </Button>
+          </div>
+
+          <Separator className="my-6" />
+
+          {/* Additional Details */}
+          <div className="space-y-2 text-sm">
+            <div className="flex">
+              <span className="text-gray-500 font-medium w-24">Category:</span>
+              <span className="text-gray-900">Sofas</span>
+            </div>
+            <div className="flex">
+              <span className="text-gray-500 font-medium w-24">Tags:</span>
+              <span className="text-gray-900">{specificProduct.tags.join(', ')}</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>
-  );
+  )
 }
+

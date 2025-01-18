@@ -16,7 +16,7 @@ export default function ProductDetailPage({
 }) {
   return (
     <div className="mt-24 lg:mt-8">
-      <ProductDetailTopSection product_id={params.product_id} />
+      <ProductDetailTopSection product_id={"Detailed Page"} />
       <div className="mt-8 px-4 md:px-[50px] lg:px-[100px]">
         <ProductDetailShowcaseSection productId={params.product_id} />
       </div>

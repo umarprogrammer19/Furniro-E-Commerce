@@ -1,26 +1,13 @@
 "use client";
 
 import { motion } from "framer-motion";
-
 import { cn } from "@/lib/utils";
 import React from "react";
 import MainButton from "../common/MainButton";
-import { useRouter } from "next-nprogress-bar";
 import Link from "next/link";
 import Image from "next/image";
 import { ImportedData } from "@/types";
-
-
-// interface IProps {
-//   id: string;
-//   imageUrl: string;
-//   title: string;
-//   description: string;
-//   price: string;
-//   otherPrice: string;
-//   type: string;
-//   typeValue: string;
-// }
+import { useRouter } from "next/navigation";
 
 function ProductCard({
   _id,
@@ -33,27 +20,32 @@ function ProductCard({
   isNew,
 }: ImportedData) {
   const router = useRouter();
+
   const icons = [
     {
       iconUrl: "/images/share_icon.png",
       title: "Share",
-      action: () => { },
+      action: () => {
+        navigator.clipboard.writeText(window.location.href);
+        alert("Product link copied to clipboard!");
+      },
     },
     {
       iconUrl: "/images/compare.png",
       title: "Compare",
       link: "/comparison",
-      action: () => { },
     },
     {
       iconUrl: "/images/like_icon.png",
       title: "Like",
-      action: () => { },
+      action: () => {
+        alert("Added to favorites!");
+      },
     },
   ];
 
   const cardVariant = {
-    initial: { opacity: 0, x: 120, scale: 0.5 },
+    initial: { opacity: 0, x: 120, scale: 0.8 },
     animate: { opacity: 1, x: 0, scale: 1 },
   };
 
@@ -69,66 +61,76 @@ function ProductCard({
       <div className="relative">
         <Image
           src={imageUrl}
-          alt="product"
+          alt={title}
           width={500}
           height={300}
-          className="h-[301px] w-full object-cover"
+          className="h-[301px] w-full object-cover rounded-md"
         />
 
-        {dicountPercentage && (
+        {dicountPercentage !== undefined && (
           <div
             className={cn(
-              "absolute top-[24px] right-[24px] w-[48px] h-[48px] rounded-full text-normal font-medium px-2 text-white flex justify-center items-center",
-              dicountPercentage == 0
-                ? "bg-error"
-                : dicountPercentage > 0
-                  ? "bg-success"
-                  : ""
+              "absolute top-[24px] right-[24px] w-[48px] h-[48px] rounded-full text-sm font-medium flex justify-center items-center",
+              dicountPercentage > 0 ? "bg-success text-white" : isNew ? "bg-primary text-white" : ""
             )}
           >
-            {dicountPercentage > 0 ? `-${dicountPercentage}%` : "NEW"}
+            {dicountPercentage > 0
+              ? `-${dicountPercentage}%`
+              : isNew
+                ? "NEW"
+                : ""}
           </div>
         )}
       </div>
-      <div className="bg-[#F4F5F7] p-4">
-        <p className="text-customBlack text-24 font-semibold">{title}</p>
-        <p className="text-customGray font-medium text-normal py-[8px]">
-          {description.slice(0,120)}...
+
+      <div className="bg-[#F4F5F7] p-4 rounded-b-md">
+        <p className="text-customBlack text-xl font-semibold truncate">
+          {title}
+        </p>
+        <p className="text-customGray font-medium text-sm py-2">
+          {description.slice(0, 158)}...
         </p>
         <div className="flex justify-between items-center">
-          <p className="text-customBlack text-20 font-semibold">{price}</p>
-          {/* {otherPrice && (
-            <p className="line-through text-customGray">{otherPrice}</p>
-          )} */}
+          <p className="text-customBlack text-lg font-semibold">${price}</p>
         </div>
       </div>
 
-      {/* OVERLAY START */}
+      {/* Overlay */}
       <motion.div
         className={cn(
-          "absolute p-4 left-0 right-0 top-0 bottom-0 bg-[#3A3A3A]/80"
+          "absolute inset-0 bg-[#3A3A3A]/80 opacity-0 hover:opacity-100 transition-opacity p-4"
         )}
         variants={cardVariant}
       >
         <div className="pt-[30%]">
           <div className="flex justify-center">
             <MainButton
-              text="View product"
-              classes="bg-white text-primary font-bold hover:bg-white"
+              text="View Product"
+              classes="bg-white text-primary font-bold hover:bg-white px-4 py-2"
               action={() => router.push(`/shop/product/${_id}`)}
             />
           </div>
-          <div className="flex justify-center gap-5 mt-[24px]">
+          <div className="flex justify-center gap-5 mt-6">
             {icons.map((icon, index) => (
               <div
-                className="flex gap-1 items-center hover:cursor-pointer"
                 key={index}
+                className="flex items-center gap-1 hover:cursor-pointer"
                 onClick={icon.action}
               >
-                <div>
-                  <Image src={icon.iconUrl} alt="icon" width={15} height={15} />
-                </div>
-                <Link href={icon.link ? icon.link : ""} className="text-white">{icon.title}</Link>
+                <Image
+                  src={icon.iconUrl}
+                  alt={`${icon.title} icon`}
+                  width={15}
+                  height={15}
+                  className="object-contain"
+                />
+                {icon.link ? (
+                  <Link href={icon.link} className="text-white">
+                    {icon.title}
+                  </Link>
+                ) : (
+                  <span className="text-white">{icon.title}</span>
+                )}
               </div>
             ))}
           </div>

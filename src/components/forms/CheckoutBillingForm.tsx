@@ -99,7 +99,7 @@ export function CheckoutBillingForm() {
             name="firstName"
             value={formData.firstName}
             onChange={handleInputChange}
-            className="h-[50px] w-full"
+            className="px-2 bg-gray-100 h-[50px] w-full"
           />
           {errors.firstName && <p className="text-red-500">{errors.firstName}</p>}
         </div>
@@ -111,7 +111,7 @@ export function CheckoutBillingForm() {
             name="lastName"
             value={formData.lastName}
             onChange={handleInputChange}
-            className="h-[50px] w-full"
+            className="px-2 bg-gray-100 h-[50px] w-full"
           />
           {errors.lastName && <p className="text-red-500">{errors.lastName}</p>}
         </div>
@@ -124,7 +124,7 @@ export function CheckoutBillingForm() {
           name="company"
           value={formData.company}
           onChange={handleInputChange}
-          className="h-[50px] w-full"
+          className="px-2 bg-gray-100 h-[50px] w-full"
         />
       </div>
 
@@ -134,7 +134,7 @@ export function CheckoutBillingForm() {
           name="country"
           value={formData.country}
           onChange={handleInputChange}
-          className="h-[50px] w-full"
+          className="px-2 bg-gray-100 h-[50px] w-full"
         >
           <option value="">Select Country</option>
           {Countries.map((country, index) => (
@@ -156,7 +156,7 @@ export function CheckoutBillingForm() {
             name={field}
             value={formData[field as keyof BillingInfo] || ""}
             onChange={handleInputChange}
-            className="h-[50px] w-full"
+            className="px-2 bg-gray-100 h-[50px] w-full"
           />
           {errors[field as keyof Errors] && <p className="text-red-500">{errors[field as keyof Errors]}</p>}
         </div>

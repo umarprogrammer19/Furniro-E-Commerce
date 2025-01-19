@@ -45,11 +45,3 @@ export default function CartTotals() {
     </div>
   );
 }
-
-interface ProductList {
-  id: string;
-  productImageUrl: string;
-  productName: string;
-  quantity: number;
-  unitPrice: number;
-}

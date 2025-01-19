@@ -1,4 +1,8 @@
 "use client"
+import BinIcon from "@/components/icons/bin-icon";
+import CountIncrement from "@/components/sections/count-icrement";
+import EmptyCartState from "@/components/sections/empty-cart-state";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -7,20 +11,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import BinIcon from "@/components/icons/bin-icon";
-import CountIncrement from "@/components/sections/count-icrement";
-import { useEffect, useState } from "react";
-import EmptyCartState from "@/components/sections/empty-cart-state";
-import Image from "next/image";
 import { ImportedData } from "@/types";
-interface ProductList {
-  id: string;
-  productImageUrl: string;
-  productName: string;
-  quantity: number;
-  unitPrice: number;
-}
+import Image from "next/image";
+import { useEffect, useState } from "react";
+
 
 export default function CartList() {
   const [cartItems, setCartItems] = useState<ImportedData[]>([]);

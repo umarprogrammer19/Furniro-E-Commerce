@@ -3,20 +3,11 @@ import ProductCard from "@/components/cards/ProductCard";
 import MainButton from "@/components/common/MainButton";
 import { client } from "@/sanity/lib/client";
 import { ImportedData } from "@/types";
+import { query } from "@/utils/query";
 import React, { useEffect, useState } from "react";
 
 function ProductDetailRelatedSection() {
   const [data, setData] = useState<ImportedData[]>([]);
-  const query = `*[_type == "product"]{
-        _id,
-        title,
-        "imageUrl": imageUrl.asset->url,
-        price,
-        tags,
-        description,
-        dicountPercentage,
-        isNew,  
-      }`
   useEffect(() => {
     const fetchDataFromSanity = async () => {
       try {

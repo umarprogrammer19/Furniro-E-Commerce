@@ -4,19 +4,10 @@ import ProductCard from "../cards/ProductCard";
 import MainButton from "../common/MainButton";
 import { ImportedData } from "@/types";
 import React, { useEffect, useState } from "react";
+import { query } from "@/utils/query";
 
 function OurProductSection() {
   const [PRODUCTS, setPRODUCTS] = useState<ImportedData[]>([]);
-  const query = `*[_type == "product"]{
-    _id,
-    title,
-    "imageUrl": imageUrl.asset->url,
-    price,
-    tags,
-    description,
-    dicountPercentage,
-    isNew,  
-  }`
   useEffect(() => {
     const fetchDataFromSanity = async () => {
       try {

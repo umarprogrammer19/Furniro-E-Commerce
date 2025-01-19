@@ -16,7 +16,7 @@ function CheckoutDetailSection() {
   const computeSubTotal = () => {
     let total = 0;
     for (const product of products) {
-      total += Number(product.quantity) * Number(product.unitPrice);
+      total += Number(product.quantity) * Number(product.price);
     }
     return total;
   };
@@ -37,7 +37,7 @@ function CheckoutDetailSection() {
       body: {
         products: products.map((product) => {
           return {
-            id: product.id,
+            id: product._id,
             qty: product.quantity,
           };
         }),
@@ -67,10 +67,10 @@ function CheckoutDetailSection() {
         {products.map((product, index) => (
           <div key={index} className="flex justify-between">
             <p className="text-customGray2 text-sm ">
-              {product.productName}{" "}
+              {product.title}{" "}
               <span className="font-bold text-black">X {product.quantity}</span>
             </p>
-            <p>{Number(product.unitPrice) * Number(product.quantity)}</p>
+            <p>{Number(product.price) * Number(product.quantity)}</p>
           </div>
         ))}
       </div>

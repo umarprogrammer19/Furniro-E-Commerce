@@ -6,6 +6,14 @@ interface IProduct {
   unitPrice: number;
 }
 
+export interface ICart {
+  _id: string;
+  title: string;
+  imageUrl: string;
+  quantity: number;
+  price: number;
+}
+
 export interface ImportedData {
   _id: string;
   title: string;
@@ -14,8 +22,10 @@ export interface ImportedData {
   imageUrl: string;
   dicountPercentage: number;
   isNew: boolean;
+  quantity?: number;
   tags: string[]
 }
+
 
 interface IResponse {
   response: {

@@ -20,7 +20,7 @@ export default function CartSection({
 
   const removeProductFromCart = (productId: number | string) => {
     const filteredProducts = products.filter(
-      (product) => product.id !== productId
+      (product) => product._id !== productId
     );
     setProducts(filteredProducts);
   };
@@ -28,14 +28,14 @@ export default function CartSection({
   const computeSubTotal = () => {
     let total = 0;
     for (const product of products) {
-      total += product.quantity * product.unitPrice;
+      total += product.quantity * product.price;
     }
     setSubTotal(total);
   };
 
   useEffect(() => {
     computeSubTotal();
-  }, []);
+  }, [products]);
 
   return (
     <div className="w-[417px] h-[746px] bg-white p-[30px] flex justify-between flex-col">
@@ -55,7 +55,7 @@ export default function CartSection({
             >
               <div>
                 <Image
-                  src={product.productImageUrl!}
+                  src={product.imageUrl}
                   alt="product image"
                   width={120}
                   height={120}
@@ -64,18 +64,18 @@ export default function CartSection({
               </div>
 
               <div>
-                <p className="text-normal">{product.productName}</p>
+                <p className="text-normal">{product.title}</p>
                 <p>
                   {product.quantity} X{" "}
                   <span className="text-primary font-medium text-sm">
-                    Rs. {product.unitPrice}
+                    Rs. {product.price}
                   </span>
                 </p>
               </div>
 
               <div
                 className="cursor-pointer"
-                onClick={() => removeProductFromCart(product.id)}
+                onClick={() => removeProductFromCart(product._id)}
               >
                 <Image src={"/images/delete_icon.png"} alt="close icon" width={30} height={30} />
               </div>

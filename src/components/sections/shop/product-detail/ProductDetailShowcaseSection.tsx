@@ -58,15 +58,15 @@ export default function ProductDetailShowcaseSection({
     if (!specificProduct) return
 
     const productObject = {
-      id: specificProduct._id,
-      productImageUrl: specificProduct.imageUrl,
-      productName: specificProduct.title,
+      _id: specificProduct._id,
+      imageUrl: specificProduct.imageUrl,
+      title: specificProduct.title,
       quantity,
-      unitPrice: Number(specificProduct.price),
+      price: Number(specificProduct.price),
     }
 
     setCart((prev) => {
-      const existingProductIndex = prev.findIndex((item) => item.id === productObject.id)
+      const existingProductIndex = prev.findIndex((item: { _id: string }) => item._id === productObject._id)
       if (existingProductIndex !== -1) {
         const updatedCart = [...prev]
         updatedCart[existingProductIndex] = productObject

@@ -1,10 +1,11 @@
 "use client";
 
 import LinkOutlineButton from "@/components/sections/link-btn-outline";
+import { ICart } from "@/types";
 import { useEffect, useState } from "react";
 
 export default function CartTotals() {
-  const [cartItems, setCartItems] = useState<ProductList[]>([]);
+  const [cartItems, setCartItems] = useState<ICart[]>([]);
 
   useEffect(() => {
     const storedCart = localStorage.getItem("CART_ITEMS");
@@ -14,7 +15,7 @@ export default function CartTotals() {
   }, [cartItems]);
 
   const calculateTotal = () =>
-    cartItems.reduce((total, item) => total + item.quantity * item.unitPrice, 0);
+    cartItems.reduce((total, item) => total + item.quantity * item.price, 0);
 
   if (cartItems.length === 0) {
     return null;
@@ -28,9 +29,9 @@ export default function CartTotals() {
         <div className="w-full flex flex-col gap-2">
           {cartItems.map((item, index) => (
             <div key={index} className="flex items-center justify-between">
-              <p className="text-sm text-myBlack">{item.productName}</p>
+              <p className="text-sm text-myBlack">{item.title}</p>
               <p className="text-[#9F9F9F] font-medium text-sm">
-                Rs: {item.unitPrice.toLocaleString()} X {item.quantity}
+                Rs: {item.price.toLocaleString()} X {item.quantity}
               </p>
             </div>
           ))}

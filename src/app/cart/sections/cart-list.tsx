@@ -13,6 +13,7 @@ import CountIncrement from "@/components/sections/count-icrement";
 import { useEffect, useState } from "react";
 import EmptyCartState from "@/components/sections/empty-cart-state";
 import Image from "next/image";
+import { ImportedData } from "@/types";
 interface ProductList {
   id: string;
   productImageUrl: string;
@@ -22,7 +23,7 @@ interface ProductList {
 }
 
 export default function CartList() {
-  const [cartItems, setCartItems] = useState<ProductList[]>([]);
+  const [cartItems, setCartItems] = useState<ImportedData[]>([]);
 
   useEffect(() => {
     const storedCart = localStorage.getItem("CART_ITEMS");
@@ -31,27 +32,27 @@ export default function CartList() {
     }
   }, []);  // Only runs on component mount
 
-  const updateCart = (updatedCart: ProductList[]) => {
+  const updateCart = (updatedCart: ImportedData[]) => {
     localStorage.setItem("CART_ITEMS", JSON.stringify(updatedCart));
     setCartItems(updatedCart);
   };
 
   const removeFromCart = (id: string) => {
-    const updatedCart = cartItems.filter((item) => item.id !== id);
+    const updatedCart = cartItems.filter((item) => item._id !== id);
     updateCart(updatedCart);
   };
 
   const increaseItemCount = (id: string) => {
     const updatedCart = cartItems.map((item) =>
-      item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+      item.quantity && item._id === id ? { ...item, quantity: item.quantity + 1 } : item
     );
     updateCart(updatedCart);
   };
 
   const decreaseItemCount = (id: string) => {
     const updatedCart = cartItems.map((item) =>
-      item.id === id && item.quantity > 1
-        ? { ...item, quantity: item.quantity - 1 }
+      item._id === id && item.quantity! > 1
+        ? { ...item, quantity: (item.quantity && item.quantity - 1) }
         : item
     );
     updateCart(updatedCart);
@@ -74,39 +75,39 @@ export default function CartList() {
         </TableHeader>
         <TableBody>
           {cartItems.map((item) => (
-            <TableRow key={item.id} className="hover:bg-transparent">
+            <TableRow key={item._id} className="hover:bg-transparent">
               <TableCell className="font-medium">
                 <div className="flex items-center gap-3">
                   <Image
-                    src={item.productImageUrl}
-                    alt={item.productName}
+                    src={item.imageUrl}
+                    alt={item.title}
                     width={500}
                     height={500}
                     className="w-16 h-16 rounded-[7px]"
                   />
                   <div className="flex flex-col">
-                    <p>{item.productName}</p>
+                    <p>{item.title}</p>
                     <p className="text-[#9F9F9F] text-xs flex sm:hidden">
-                      Rs: {(item.quantity * Number(item.unitPrice)).toLocaleString()}
+                      Rs: {(item.quantity! * Number(item.price)).toLocaleString()}
                     </p>
                   </div>
                 </div>
               </TableCell>
               <TableCell className="text-myBlack hidden sm:table-cell align-middle">
-                Rs: {Number(item.unitPrice).toLocaleString()}
+                Rs: {Number(item.price).toLocaleString()}
               </TableCell>
               <TableCell>
-                <CountIncrement
-                  increaseFunction={() => increaseItemCount(item.id)}
-                  decreaseFunction={() => decreaseItemCount(item.id)}
+                {item.quantity && <CountIncrement
+                  increaseFunction={() => increaseItemCount(item._id)}
+                  decreaseFunction={() => decreaseItemCount(item._id)}
                   count={item.quantity}
                   type="cart"
-                />
+                />}
               </TableCell>
               <TableCell className="text-center">
                 <Button
                   className="bg-transparent group hover:bg-transparent"
-                  onClick={() => removeFromCart(item.id)}
+                  onClick={() => removeFromCart(item._id)}
                 >
                   <BinIcon className="w-[22px] h-[22px] fill-[#b88e2fcc] group-hover:fill-myOrange transition-all duration-300" />
                 </Button>

@@ -1,8 +1,6 @@
 "use client";
 
-import LinkOutlineButton from "@/components/sections/link-btn-outline";
 import { ICart } from "@/types";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function CartTotals() {

@@ -1,38 +1,26 @@
 "use client";
-
 import { useState } from "react";
 import { MenuIcon, X } from "lucide-react";
 import Link from "next/link";
 import CartSection from "../sections/shop/CartSection";
-
 import { RemoveScroll } from "react-remove-scroll";
 import { useAtomValue } from "jotai";
 import { Badge } from "../ui/badge";
 import { cartAtom } from "@/lib/storage/jotai";
 import Image from "next/image";
+import { useSearch } from "@/context/searchContext";
 
 function NavBar() {
   const [showCart, setShowCart] = useState(false);
   const [menu, setMenu] = useState(false);
   const cartValue = useAtomValue(cartAtom);
+  const { searchQuery, setSearchQuery } = useSearch();
 
   const links = [
-    {
-      title: "Home",
-      link: "/",
-    },
-    {
-      title: "Shop",
-      link: "/shop",
-    },
-    {
-      title: "Blog",
-      link: "/Blog",
-    },
-    {
-      title: "Contact",
-      link: "/contact",
-    },
+    { title: "Home", link: "/" },
+    { title: "Shop", link: "/shop" },
+    { title: "Blog", link: "/Blog" },
+    { title: "Contact", link: "/contact" },
   ];
 
   const icons = [
@@ -40,11 +28,6 @@ function NavBar() {
       iconUrl: "/images/user_icon.png",
       alt: "user icon",
       action: () => console.log("You just clicked on the user icon"),
-    },
-    {
-      iconUrl: "/images/search_icon.png",
-      alt: "search icon",
-      action: () => console.log("You just clicked on the search icon"),
     },
     {
       iconUrl: "/images/heart_icon.png",
@@ -58,15 +41,16 @@ function NavBar() {
       badgeValue: cartValue?.length,
     },
   ];
+
   const toggleMenu = () => {
     setMenu(!menu);
   };
 
   return (
     <div className="relative">
-      <div className="md:sticky md:top-0   md:shadow-none z-20 relative">
+      <div className="md:sticky md:top-0 md:shadow-none z-20 relative">
         {/* DESKTOP */}
-        <div className=" hidden lg:block animate-in fade-in zoom-in bg-white p-4">
+        <div className="hidden lg:block animate-in fade-in zoom-in bg-white p-4">
           <div className="flex justify-between mx-[41px] items-center">
             <Link href="/">
               <div>
@@ -79,13 +63,22 @@ function NavBar() {
                 <Link
                   href={link.link}
                   key={index}
-                  className={`hover:text-primary cursor-pointer flex items-center gap-2  font-[500] text-gray`}
+                  className="hover:text-primary cursor-pointer flex items-center gap-2 font-[500] text-gray"
                 >
                   <p>{link.title}</p>
                 </Link>
               ))}
             </div>
+
             <div className="flex items-center gap-[40px] select-none">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)} // Set search query
+                placeholder="Search Products"
+                className="px-2 py-1 border rounded"
+              />
+
               {icons.map((icon, index) => (
                 <div key={index} className="relative">
                   <Image
@@ -111,11 +104,11 @@ function NavBar() {
             </div>
           </div>
         </div>
+
         {/* MOBILE */}
         <div
-          className={` block lg:hidden shadow-sm  fixed top-0 w-full z-[999] bg-white py-4 animate-in fade-in zoom-in  ${
-            menu ? " !bg-[#FFF3E3] py-2" : ""
-          } `}
+          className={` block lg:hidden shadow-sm  fixed top-0 w-full z-[999] bg-white py-4 animate-in fade-in zoom-in  ${menu ? " !bg-[#FFF3E3] py-2" : ""
+            } `}
         >
           <div className="flex justify-between mx-[10px]">
             <div className="flex gap-[50px] text-[16px] items-center select-none">
@@ -175,7 +168,6 @@ function NavBar() {
           onClick={() => setShowCart(!showCart)}
         ></div>
       )}
-
       <div className="hidden md:block md:absolute top-0 right-0 z-[100]">
         {showCart && (
           <RemoveScroll>

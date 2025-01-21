@@ -5,6 +5,7 @@ import NavBar from '@/components/common/NavBar'
 import FooterSection from '@/components/sections/FooterSection'
 import { Toaster } from '@/components/ui/toaster'
 import LoadingIndicator from '@/components/common/LoadingIndicator'
+import { SearchProvider } from '@/context/searchContext'
 
 export const metadata: Metadata = {
   title: 'Furniro Ecommerce',
@@ -24,13 +25,15 @@ export default function RootLayout({
       <body className={poppin.className} >
 
         <main className="bg-white">
-          <LoadingIndicator />
-          <NavBar />
-          {children}
-          <Toaster />
-          <div className="mt-[56px]">
-            <FooterSection />
-          </div>
+          <SearchProvider>
+            <LoadingIndicator />
+            <NavBar />
+            {children}
+            <Toaster />
+            <div className="mt-[56px]">
+              <FooterSection />
+            </div>
+          </SearchProvider>
         </main>
       </body>
     </html>

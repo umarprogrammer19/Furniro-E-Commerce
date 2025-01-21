@@ -1,13 +1,16 @@
 "use client";
-import { client } from "@/sanity/lib/client";
 import ProductCard from "../cards/ProductCard";
 import MainButton from "../common/MainButton";
 import { ImportedData } from "@/types";
-import React, { useEffect, useState } from "react";
+import { client } from "@/sanity/lib/client";
+import { useEffect, useState } from "react";
 import { query } from "@/utils/query";
+import { useSearch } from "@/context/searchContext";
 
 function OurProductSection() {
+  const { searchQuery } = useSearch();
   const [PRODUCTS, setPRODUCTS] = useState<ImportedData[]>([]);
+
   useEffect(() => {
     const fetchDataFromSanity = async () => {
       try {
@@ -16,9 +19,16 @@ function OurProductSection() {
       } catch (error) {
         console.log(error);
       }
-    }
+    };
+
     fetchDataFromSanity();
-  }, [])
+  }, []);
+
+  // Filter the products based on the search query
+  const filteredProducts = PRODUCTS.filter((product) =>
+    product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    product.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <section className="w-full overflow-x-hidden">
@@ -26,7 +36,7 @@ function OurProductSection() {
         <p className="text-[32px] font-bold text-center">Our Product</p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-[20px] mt-[30px]">
-        {PRODUCTS.map((item: ImportedData) => (
+        {filteredProducts.map((item: ImportedData) => (
           <ProductCard {...item} key={item._id} />
         ))}
       </div>

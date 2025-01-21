@@ -1,5 +1,6 @@
 import React from "react";
 import MainButton from "../common/MainButton";
+import Link from "next/link";
 
 function HeroSection() {
   return (
@@ -15,7 +16,9 @@ function HeroSection() {
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. <br />
           Ut elit tellus, luctus nec ullamcorper mattis.
         </p>
-        <MainButton text="BUY NOW" classes="w-[222px]" />
+        <Link href={"/shop"}>
+          <MainButton text="BUY NOW" classes="w-[222px]" />
+        </Link>
       </div>
     </section>
   );

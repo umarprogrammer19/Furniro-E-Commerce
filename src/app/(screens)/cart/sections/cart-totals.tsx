@@ -1,5 +1,6 @@
 "use client";
 
+import CheckoutButton from "@/components/sections/payment/paymentBtn";
 import { ICart } from "@/types";
 import { useEffect, useState } from "react";
 
@@ -11,7 +12,7 @@ export default function CartTotals() {
     if (storedCart) {
       setCartItems(JSON.parse(storedCart));
     }
-  }, [cartItems]);
+  }, []);
 
   const calculateTotal = () =>
     cartItems.reduce((total, item) => total + item.quantity * item.price, 0);
@@ -40,8 +41,13 @@ export default function CartTotals() {
           </div>
         </div>
       </div>
-      {/* <LinkOutlineButton className="w-[90%]" text="Checkout" link="/checkout" /> */}
-      <button onClick={() => window.location.href = "/checkout"} className="w-[90%] bg-white py-2 text-center border border-myOrange text-sm font-medium text-myOrange hover:bg-lightOrange hover:text-myOrange">Checkout</button>
+      <CheckoutButton
+        products={cartItems.map((item) => ({
+          name: item.title,
+          price: item.price,
+          quantity: item.quantity,
+        }))}
+      />
     </div>
   );
 }

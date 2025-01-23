@@ -19,6 +19,7 @@
     "@radix-ui/react-toast": "^1.2.2",
     "@sanity/image-url": "^1.1.0",
     "@sanity/vision": "^3.70.0",
+    "@stripe/stripe-js": "^5.5.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cookies-next": "^4.3.0",

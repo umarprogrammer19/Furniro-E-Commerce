@@ -4,7 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { signupUser } from "@/lib/auth/auth"
+import { signupUser } from "@/lib/api/auth"
 import { useRouter } from "next/navigation"
 
 export default function Signup() {

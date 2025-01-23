@@ -5,7 +5,7 @@ import Link from "next/link"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { setCookie } from "cookies-next";
-import { loginUser } from "@/lib/auth/auth"
+import { loginUser } from "@/lib/api/auth"
 import { useRouter } from "next/navigation"
 
 export default function Login() {

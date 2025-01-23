@@ -36,7 +36,7 @@ function ShopFilterSection() {
             className="h-[37px] border border-customGray2"
           />
         </div>
-        <p className="text-normal">Showing 1 - 16 of 32 results</p>
+        <p className="text-normal">Showing 1 - 8 of 24 results</p>
       </div>
       {/* RHS */}
       <div className="flex gap-8">

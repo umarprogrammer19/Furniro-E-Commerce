@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 
 function ShopProductSection() {
   const { searchQuery } = useSearch();
-  const { minPrice, maxPrice, sortBy } = useFilter();
+  const { minPrice, maxPrice, sortBy, category } = useFilter();
   const [PRODUCTS, setPRODUCTS] = useState<ImportedData[]>([]);
   const [skipNumberOfProducts, setSkipNumberOfProducts] = useState<number>(8);
 
@@ -33,9 +33,12 @@ function ShopProductSection() {
       product.description.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesPrice =
       product.price >= minPrice && product.price <= maxPrice;
+    const matchesCategory =
+      category === "all" || product.category.toLowerCase() === category.toLowerCase();
 
-    return matchesSearch && matchesPrice;
+    return matchesSearch && matchesPrice && matchesCategory;
   });
+
 
   if (sortBy === "price") {
     filteredProducts.sort((a, b) => a.price - b.price);

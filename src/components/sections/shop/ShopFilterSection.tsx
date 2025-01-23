@@ -1,3 +1,5 @@
+"use client";
+
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -9,8 +11,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { useFilter } from "@/context/filterContext";
 
 function ShopFilterSection() {
+  const { setMinPrice, setMaxPrice, setSortBy } = useFilter();
+
   return (
     <section className="bg-[#F9F1E7] px-4 py-[31px] flex flex-col md:flex-row gap-8 justify-around items-center">
       {/* LHS */}
@@ -41,12 +46,27 @@ function ShopFilterSection() {
       {/* RHS */}
       <div className="flex gap-8">
         <div className="flex gap-[17px] items-center">
-          <p className="text-[20px]">Show</p>
-          <Input type="number" className="bg-white w-[65px] h-[55px]" />
+          <p className="text-[20px]">Price</p>
+          <Input
+            type="number"
+            placeholder="Min"
+            className="bg-white w-[65px] h-[55px]"
+            onChange={(e) => setMinPrice(Number(e.target.value))}
+          />
+          <Input
+            type="number"
+            placeholder="Max"
+            className="bg-white w-[65px] h-[55px]"
+            onChange={(e) => setMaxPrice(Number(e.target.value))}
+          />
         </div>
         <div className="flex gap-[17px] items-center">
           <p className="text-[20px]">Sort by</p>
-          <Select>
+          <Select
+            onValueChange={(value) => {
+              setSortBy(value);
+            }}
+          >
             <SelectTrigger className="w-[180px] h-[55px]">
               <SelectValue placeholder="Select a filter" />
             </SelectTrigger>
@@ -54,7 +74,6 @@ function ShopFilterSection() {
               <SelectGroup>
                 <SelectLabel>Filter</SelectLabel>
                 <SelectItem value="default">Default</SelectItem>
-                <SelectItem value="type">Type</SelectItem>
                 <SelectItem value="price">Price</SelectItem>
               </SelectGroup>
             </SelectContent>

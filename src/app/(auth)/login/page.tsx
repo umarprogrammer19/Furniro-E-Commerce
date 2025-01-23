@@ -1,8 +1,36 @@
+"use client"
+
+import { useState } from "react"
 import Link from "next/link"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { loginUser } from "@/lib/auth/auth"
+import { useRouter } from "next/navigation"
 
 export default function Login() {
+    const router = useRouter();
+    const [isLoading, setIsLoading] = useState(false)
+    const [error, setError] = useState("")
+
+    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault()
+        setError("")
+        setIsLoading(true)
+
+        const formData = new FormData(e.currentTarget)
+        const email = formData.get("email") as string
+        const password = formData.get("password") as string
+
+        try {
+            await loginUser(email, password)
+            router.push("/")
+        } catch (err) {
+            setError("Invalid email or password")
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50">
             <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow-lg">
@@ -10,7 +38,8 @@ export default function Login() {
                     <h2 className="mt-6 text-3xl font-bold text-gray-900">Welcome back</h2>
                     <p className="mt-2 text-sm text-gray-600">Please sign in to your account</p>
                 </div>
-                <form className="mt-8 space-y-6">
+                <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+                    {error && <div className="text-red-500 text-sm text-center">{error}</div>}
                     <div className="space-y-4">
                         <div>
                             <label htmlFor="email" className="block text-sm font-medium text-gray-700">
@@ -42,8 +71,8 @@ export default function Login() {
                         </div>
                     </div>
 
-                    <Button type="submit" className="w-full bg-primary hover:bg-primary-hover text-white">
-                        Sign in
+                    <Button type="submit" className="w-full bg-primary hover:bg-primary-hover text-white" disabled={isLoading}>
+                        {isLoading ? "Signing in..." : "Sign in"}
                     </Button>
 
                     <div className="text-center text-sm">

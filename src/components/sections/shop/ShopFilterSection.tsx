@@ -14,7 +14,7 @@ import { Separator } from "@/components/ui/separator";
 import { useFilter } from "@/context/filterContext";
 
 function ShopFilterSection() {
-  const { setMinPrice, setMaxPrice, setSortBy } = useFilter();
+  const { setMinPrice, setMaxPrice, setSortBy, setCategory } = useFilter();
 
   return (
     <section className="bg-[#F9F1E7] px-4 py-[31px] flex flex-col md:flex-row gap-8 justify-around items-center">
@@ -45,6 +45,30 @@ function ShopFilterSection() {
       </div>
       {/* RHS */}
       <div className="flex gap-8">
+        <div className="flex gap-[17px] items-center">
+          <p className="text-[20px]">Category</p>
+          <Select
+            onValueChange={(value) => {
+              setCategory(value);
+            }}
+          >
+            <SelectTrigger className="w-[180px] h-[55px]">
+              <SelectValue placeholder="All Categories" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Categories</SelectLabel>
+                <SelectItem value="all">All</SelectItem>
+                <SelectItem value="sofa">Sofas</SelectItem>
+                <SelectItem value="table">Tables</SelectItem>
+                <SelectItem value="chair">Chairs</SelectItem>
+                <SelectItem value="bed">Beds</SelectItem>
+                <SelectItem value="light">Light</SelectItem>
+                <SelectItem value="items">Items</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
         <div className="flex gap-[17px] items-center">
           <p className="text-[20px]">Price</p>
           <Input

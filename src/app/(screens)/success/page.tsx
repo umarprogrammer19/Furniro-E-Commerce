@@ -1,7 +1,3 @@
-// pages/success.tsx
-
-import { useEffect, useState } from "react";
-
 const Success = () => {
     // const [orderDetails, setOrderDetails] = useState(null);
 

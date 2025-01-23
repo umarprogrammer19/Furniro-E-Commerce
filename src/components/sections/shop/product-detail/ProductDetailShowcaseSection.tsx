@@ -32,6 +32,7 @@ export default function ProductDetailShowcaseSection({
           "imageUrl": imageUrl.asset->url,
           price,
           tags,
+          category,
           description,
           discountPercentage,
           isNew
@@ -180,7 +181,7 @@ export default function ProductDetailShowcaseSection({
           <div className="space-y-2 text-sm">
             <div className="flex">
               <span className="text-gray-500 font-medium w-24">Category:</span>
-              <span className="text-gray-900">Sofas</span>
+              <span className="text-gray-900">{specificProduct.category || "Not Specified"}</span>
             </div>
             <div className="flex">
               <span className="text-gray-500 font-medium w-24">Tags:</span>

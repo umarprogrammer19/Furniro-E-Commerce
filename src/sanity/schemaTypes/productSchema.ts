@@ -44,6 +44,21 @@ export const product = defineType({
             name: "isNew",
             type: "boolean",
             title: "New Badge",
+        }, {
+            name: "category",
+            type: "string",
+            title: "Category",
+            validation: (rule) => rule.required(),
+            options: {
+                list: [
+                    { title: "Chair", value: "chair" },
+                    { title: "Sofa", value: "sofa" },
+                    { title: "Light", value: "light" },
+                    { title: "Bed", value: "bed" },
+                    { title: "Table", value: "table" },
+                    { title: "Items", value: "items" }
+                ],
+            },
         }
     ]
 })

@@ -3,6 +3,7 @@ export const query = `*[_type == "product"]{
     title,
     "imageUrl": imageUrl.asset->url,
     price,
+    category,
     tags,
     description,
     dicountPercentage,

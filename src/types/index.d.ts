@@ -20,6 +20,7 @@ export interface ImportedData {
   description: string;
   price: number;
   imageUrl: string;
+  category?: strign;
   dicountPercentage: number;
   isNew: boolean;
   quantity?: number;

@@ -1,7 +1,9 @@
 "use client";
+
 import ProductCard from "@/components/cards/ProductCard";
 import MainButton from "@/components/common/MainButton";
 import { useSearch } from "@/context/searchContext";
+import { useFilter } from "@/context/filterContext";
 import { client } from "@/sanity/lib/client";
 import { ImportedData } from "@/types";
 import { query } from "@/utils/query";
@@ -9,6 +11,7 @@ import { useEffect, useState } from "react";
 
 function ShopProductSection() {
   const { searchQuery } = useSearch();
+  const { minPrice, maxPrice, sortBy } = useFilter();
   const [PRODUCTS, setPRODUCTS] = useState<ImportedData[]>([]);
   const [skipNumberOfProducts, setSkipNumberOfProducts] = useState<number>(8);
 
@@ -20,14 +23,24 @@ function ShopProductSection() {
       } catch (error) {
         console.log(error);
       }
-    }
+    };
     fetchDataFromSanity();
   }, []);
 
-  const filteredProducts = PRODUCTS.filter((product) =>
-    product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    product.description.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredProducts = PRODUCTS.filter((product) => {
+    const matchesSearch =
+      product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesPrice =
+      product.price >= minPrice && product.price <= maxPrice;
+
+    return matchesSearch && matchesPrice;
+  });
+
+  if (sortBy === "price") {
+    filteredProducts.sort((a, b) => a.price - b.price);
+  }
+
   return (
     <section>
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-[32px] mt-[46px]">

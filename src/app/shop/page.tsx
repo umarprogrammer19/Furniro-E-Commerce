@@ -10,10 +10,10 @@ function ShopPage() {
             <ShopHeroSection />
             <FilterProvider>
                 <ShopFilterSection />
+                <div className="mx-4 md:mx-[130px]">
+                    <ShopProductSection />
+                </div>
             </FilterProvider>
-            <div className="mx-4 md:mx-[130px]">
-                <ShopProductSection />
-            </div>
             <ShopBannerSection />
         </div>
     );

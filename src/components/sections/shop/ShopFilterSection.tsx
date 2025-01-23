@@ -50,13 +50,13 @@ function ShopFilterSection() {
           <Input
             type="number"
             placeholder="Min"
-            className="bg-white w-[65px] h-[55px]"
+            className="bg-white w-[130px] h-[40px]"
             onChange={(e) => setMinPrice(Number(e.target.value))}
           />
           <Input
             type="number"
             placeholder="Max"
-            className="bg-white w-[65px] h-[55px]"
+            className="bg-white w-[130px] h-[40px]"
             onChange={(e) => setMaxPrice(Number(e.target.value))}
           />
         </div>

@@ -20,6 +20,7 @@
     "@sanity/vision": "^3.70.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "cookies-next": "^4.3.0",
     "framer-motion": "^11.13.1",
     "jotai": "^2.10.3",
     "lucide-react": "^0.468.0",

@@ -4,6 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { setCookie } from "cookies-next";
 import { loginUser } from "@/lib/auth/auth"
 import { useRouter } from "next/navigation"
 
@@ -22,7 +23,14 @@ export default function Login() {
         const password = formData.get("password") as string
 
         try {
-            await loginUser(email, password)
+            const { accessToken } = await loginUser(email, password)
+            console.log(accessToken);
+            setCookie('accessToken', accessToken, {
+                path: '/',
+                secure: true,
+                sameSite: 'strict',
+            });
+            localStorage.setItem('accessToken', accessToken);
             router.push("/")
         } catch (err) {
             setError("Invalid email or password")

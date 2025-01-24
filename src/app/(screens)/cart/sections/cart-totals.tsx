@@ -41,13 +41,14 @@ export default function CartTotals() {
           </div>
         </div>
       </div>
-      <CheckoutButton
+      {/* <CheckoutButton
         products={cartItems.map((item) => ({
           name: item.title,
           price: item.price,
           quantity: item.quantity,
         }))}
-      />
+      /> */}
+      <button onClick={() => window.location.href = "/checkout"} className="w-[90%] bg-white py-2 text-center border border-myOrange text-sm font-medium text-myOrange hover:bg-lightOrange hover:text-myOrange">Checkout</button>
     </div>
   );
 }

@@ -38,7 +38,7 @@ export default function CheckoutButton({ products }: CheckoutButtonProps) {
     return (
         <button
             onClick={handleCheckout}
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+            className="w-[90%] bg-white py-2 text-center border border-myOrange text-sm font-medium text-myOrange hover:bg-lightOrange hover:text-myOrange"
         >
             Checkout
         </button>

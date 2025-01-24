@@ -72,7 +72,7 @@ export function CheckoutBillingForm() {
       const response = billingInfo
         ? await makeApiCallService("/api/billing", {
           method: "PUT",
-          body: { data: formData, billingId: formData},
+          body: { data: formData, billingId: formData },
         })
         : await makeApiCallService("/api/billing", {
           method: "POST",
@@ -146,7 +146,7 @@ export function CheckoutBillingForm() {
         {errors.country && <p className="text-red-500">{errors.country}</p>}
       </div>
 
-      {["street", "town", "province", "zipCode", "phone", "email", "additionalInfo"].map((field) => (
+      {[ "city", "province", "phone", "email", "additionalInfo"].map((field) => (
         <div key={field}>
           <label className="block font-medium mb-1 capitalize">
             {field.replace(/([A-Z])/g, " $1")}

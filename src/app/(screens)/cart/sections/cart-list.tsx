@@ -24,7 +24,7 @@ export default function CartList() {
     if (storedCart) {
       setCartItems(JSON.parse(storedCart));
     }
-  }, []);
+  }, [cartItems]);
 
   const updateCart = (updatedCart: ImportedData[]) => {
     localStorage.setItem("CART_ITEMS", JSON.stringify(updatedCart));

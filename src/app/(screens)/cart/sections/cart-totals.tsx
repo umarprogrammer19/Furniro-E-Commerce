@@ -12,7 +12,7 @@ export default function CartTotals() {
     if (storedCart) {
       setCartItems(JSON.parse(storedCart));
     }
-  }, []);
+  }, [cartItems]);
 
   const calculateTotal = () =>
     cartItems.reduce((total, item) => total + item.quantity * item.price, 0);

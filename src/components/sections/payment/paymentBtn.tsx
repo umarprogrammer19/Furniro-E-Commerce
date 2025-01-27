@@ -1,5 +1,6 @@
 "use client";
 
+import { BASE_URL } from "@/lib/api/baseUrl";
 import { loadStripe } from "@stripe/stripe-js";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "");
@@ -12,10 +13,10 @@ interface CheckoutButtonProps {
 export default function CheckoutButton({ products, totalPrice }: CheckoutButtonProps) {
     const handleCheckout = async () => {
         try {
-            const response = await fetch("http://localhost:8080/api/v4/checkout", {
+            const response = await fetch(`${BASE_URL}/api/v4/checkout`, {
                 method: "POST",
-                headers: { 
-                    "Content-Type": "application/json" 
+                headers: {
+                    "Content-Type": "application/json"
                 },
                 body: JSON.stringify({ products }),
             });

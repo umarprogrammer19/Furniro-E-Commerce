@@ -3,7 +3,6 @@
 import { Separator } from "@/components/ui/separator";
 import { cartAtom } from "@/lib/storage/jotai";
 import { useAtomValue } from "jotai";
-import { useState } from "react";
 import CheckoutButton from "../payment/paymentBtn";
 
 function CheckoutDetailSection() {

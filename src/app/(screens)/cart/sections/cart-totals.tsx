@@ -1,6 +1,5 @@
 "use client";
 
-import CheckoutButton from "@/components/sections/payment/paymentBtn";
 import { ICart } from "@/types";
 import { useEffect, useState } from "react";
 
@@ -41,13 +40,7 @@ export default function CartTotals() {
           </div>
         </div>
       </div>
-      {/* <CheckoutButton
-        products={cartItems.map((item) => ({
-          name: item.title,
-          price: item.price,
-          quantity: item.quantity,
-        }))}
-      /> */}
+
       <button onClick={() => window.location.href = "/checkout"} className="w-[90%] bg-white py-2 text-center border border-myOrange text-sm font-medium text-myOrange hover:bg-lightOrange hover:text-myOrange">Checkout</button>
     </div>
   );

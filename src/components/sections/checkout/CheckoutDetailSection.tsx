@@ -1,17 +1,14 @@
 "use client";
 
-import MainButton from "@/components/common/MainButton";
 import { Separator } from "@/components/ui/separator";
-import { useToast } from "@/components/ui/use-toast";
-import makeApiCallService from "@/lib/service/apiService";
 import { cartAtom } from "@/lib/storage/jotai";
 import { useAtomValue } from "jotai";
 import { useState } from "react";
+import CheckoutButton from "../payment/paymentBtn";
 
 function CheckoutDetailSection() {
   const [loading, setLoading] = useState(false);
   const products = useAtomValue(cartAtom);
-  const { toast } = useToast();
 
   const computeSubTotal = () => {
     let total = 0;
@@ -19,41 +16,6 @@ function CheckoutDetailSection() {
       total += Number(product.quantity) * Number(product.price);
     }
     return total;
-  };
-
-  const handleCheckout = async () => {
-    if (!true) {
-      toast({
-        variant: "destructive",
-        title: "Empty Billing Info",
-        description: "Kindly fill your billing information",
-      });
-
-      return;
-    }
-    setLoading(true);
-    await makeApiCallService("/api/payment", {
-      method: "POST",
-      body: {
-        products: products.map((product) => {
-          return {
-            id: product._id,
-            qty: product.quantity,
-          };
-        }),
-      },
-    })
-      .then((res) => {
-        if (typeof window !== undefined) {
-          if (res?.response?.data?.url) {
-            window.location = res?.response?.data?.url;
-          }
-        }
-        setLoading(false);
-      })
-      .catch(() => {
-        setLoading(false);
-      });
   };
 
   return (
@@ -95,11 +57,12 @@ function CheckoutDetailSection() {
       </p>
 
       <div className="my-16 flex justify-center">
-        <MainButton
-          text="Place order"
-          classes="bg-white hover:bg-white border  border-black rounded-[15px] h-[55px] text-black"
-          isLoading={loading}
-          action={handleCheckout}
+        <CheckoutButton
+          products={products.map((item) => ({
+            name: item.title,
+            price: item.price,
+            quantity: item.quantity,
+          }))}
         />
       </div>
     </section>

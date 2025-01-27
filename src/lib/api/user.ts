@@ -1,3 +1,5 @@
+import { BASE_URL } from "./baseUrl";
+
 export async function getUser() {
     const accessToken = localStorage.getItem('accessToken');
     if (!accessToken) {
@@ -5,7 +7,7 @@ export async function getUser() {
     }
 
     try {
-        const response = await fetch('http://localhost:8080/api/v1/getUser', {
+        const response = await fetch(`${BASE_URL}/api/v1/getUser`, {
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
             },

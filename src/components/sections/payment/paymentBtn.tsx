@@ -30,7 +30,7 @@ export default function CheckoutButton({ products, totalPrice }: CheckoutButtonP
             const stripe = await stripePromise;
             if (!stripe) throw new Error("Stripe.js failed to load");
 
-            const orderResponse = await fetch("http://localhost:8080/api/v3/furniro-orders", {
+            const orderResponse = await fetch(`${BASE_URL}/api/v3/furniro-orders`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

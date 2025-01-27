@@ -1,6 +1,8 @@
+import { BASE_URL } from "./baseUrl"
+
 export async function loginUser(email: string, password: string) {
     try {
-        const response = await fetch(`http://localhost:8080/api/v1/login`, {
+        const response = await fetch(`${BASE_URL}/api/v1/login`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -21,7 +23,7 @@ export async function loginUser(email: string, password: string) {
 export async function signupUser(fullname: string, email: string, password: string) {
     try {
 
-        const response = await fetch(`${process.env.AUTH_API_BASE_URL}/api/v1/signup`, {
+        const response = await fetch(`${BASE_URL}/api/v1/signup`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

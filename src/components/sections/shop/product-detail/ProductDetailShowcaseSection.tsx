@@ -12,13 +12,14 @@ import { client } from '@/sanity/lib/client'
 import { ImportedData } from '@/types'
 import Loading from '@/components/common/loading'
 
-const MAX_QUANTITY = 5
+// const MAX_QUANTITY = Math.floor(Math.random() * 15 + 1);
 
 export default function ProductDetailShowcaseSection({
   productId,
 }: {
   productId: string
 }) {
+  const [MAX_QUANTITY, setMAX_QUANTITY] = useState<number>(1);
   const [quantity, setQuantity] = useState(1)
   const [specificProduct, setSpecificProduct] = useState<ImportedData | null>(null)
   const [cart, setCart] = useAtom(cartAtom);
@@ -38,8 +39,9 @@ export default function ProductDetailShowcaseSection({
           discountPercentage,
           isNew
         }`
-        const product = await client.fetch(query, { productId })
-        setSpecificProduct(product)
+        const product = await client.fetch(query, { productId });
+        setSpecificProduct(product);
+        setMAX_QUANTITY(Math.floor(Math.random() * 15 + 1));
       } catch (error) {
         console.error('Error fetching data from Sanity:', error)
         toast({

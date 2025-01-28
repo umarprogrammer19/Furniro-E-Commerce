@@ -1,11 +1,12 @@
 "use client";
-import ProductCard from "../cards/ProductCard";
-import MainButton from "../common/MainButton";
-import { ImportedData } from "@/types";
-import { client } from "@/sanity/lib/client";
-import { useEffect, useState } from "react";
-import { query } from "@/utils/query";
 import { useSearch } from "@/context/searchContext";
+import { client } from "@/sanity/lib/client";
+import { ImportedData } from "@/types";
+import { query } from "@/utils/query";
+import { useEffect, useState } from "react";
+import ProductCard from "../cards/ProductCard";
+import Loading from "../common/loading";
+import MainButton from "../common/MainButton";
 
 function OurProductSection() {
   const { searchQuery } = useSearch();
@@ -36,11 +37,11 @@ function OurProductSection() {
       <div>
         <p className="text-[32px] font-bold text-center">Our Product</p>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-[20px] mt-[30px]">
+      {filteredProducts.length > 0 ? <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-[20px] mt-[30px]">
         {filteredProducts.map((item: ImportedData, index: number) => (
           index < skipNumberOfProducts && <ProductCard {...item} key={item._id} />
         ))}
-      </div>
+      </div> : <Loading />}
       <div className="flex justify-center my-[32px]">
         <MainButton
           action={() => {

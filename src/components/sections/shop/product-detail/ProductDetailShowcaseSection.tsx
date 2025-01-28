@@ -10,6 +10,7 @@ import { Separator } from '@/components/ui/separator'
 import { cartAtom } from '@/lib/storage/jotai'
 import { client } from '@/sanity/lib/client'
 import { ImportedData } from '@/types'
+import Loading from '@/components/common/loading'
 
 const MAX_QUANTITY = 5
 
@@ -85,7 +86,7 @@ export default function ProductDetailShowcaseSection({
   }
 
   if (!specificProduct) {
-    return <div className="flex justify-center items-center h-96">Loading product details...</div>
+    return <Loading />
   }
 
   return (

@@ -82,13 +82,13 @@ export default function CartList() {
                   <div className="flex flex-col">
                     <p>{item.title}</p>
                     <p className="text-[#9F9F9F] text-xs flex sm:hidden">
-                      Rs: {(item.quantity! * Number(item.price)).toLocaleString()}
+                      ${(item.quantity! * Number(item.price)).toLocaleString()}
                     </p>
                   </div>
                 </div>
               </TableCell>
               <TableCell className="text-myBlack hidden sm:table-cell align-middle">
-                Rs: {Number(item.price).toLocaleString()}
+                ${Number(item.price).toLocaleString()}
               </TableCell>
               <TableCell>
                 {item.quantity && <CountIncrement

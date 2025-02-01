@@ -38,7 +38,7 @@ export default function CartSection({
   }, [products]);
 
   return (
-    <div className="w-[417px] h-[746px] bg-white p-[30px] flex justify-between flex-col">
+    <div className="w-[417px] h-screen overflow-y-auto bg-white p-[30px] flex justify-between flex-col">
       <div>
         <div className="flex justify-between items-center mb-[36px]">
           <p className="font-semibold text-[24px]">Shopping Cart</p>
@@ -68,7 +68,7 @@ export default function CartSection({
                 <p>
                   {product.quantity} X{" "}
                   <span className="text-primary font-medium text-sm">
-                    Rs. {product.price}
+                    ${product.price}
                   </span>
                 </p>
               </div>
@@ -90,10 +90,10 @@ export default function CartSection({
         </div>
       </div>
       <div>
-        <div className="flex justify-between mb-[23px]">
+        <div className="flex justify-between my-[23px]">
           <p>Subtotal</p>
           <p className="text-primary text-normal font-semibold">
-            Rs. {subTotal}
+            ${subTotal}
           </p>
         </div>
         {subTotal ? (

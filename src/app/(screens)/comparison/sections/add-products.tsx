@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { Product } from "@/lib/constants"; // Ensure Product type is imported correctly
-import Products from "./compared-products"; // Correct import path for the Products component
-import { PRODUCTS } from "@/lib/constants";
-import Image from "next/image";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { client } from "@/sanity/lib/client";
+import { query } from "@/utils/query";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import Products from "./compared-products";
 
 export type Products = {
   id: string;
@@ -18,11 +18,24 @@ export type Products = {
   typeValue?: string;
 };
 export default function AddProducts() {
-  const [comparison, setComparison] = useState<Product[]>([]); // Correct state initialization
+  const [comparison, setComparison] = useState<any[]>([]);
+  const [PRODUCTS, setPRODUCTS] = useState<any[]>([]);
 
-  function addToComparison(product: Product) {
+  useEffect(() => {
+    const fetchDataFromSanity = async () => {
+      try {
+        const PRODUCTS = await client.fetch(query);
+        setPRODUCTS(PRODUCTS);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchDataFromSanity();
+  }, []);
+
+  function addToComparison(product: any) {
     setComparison((prev) => {
-      if (!prev.some((item) => item.id === product.id)) {
+      if (!prev.some((item) => item._id === product._id)) {
         return [...prev, product];
       }
       return prev;
@@ -48,7 +61,7 @@ export default function AddProducts() {
           <DropdownMenuContent className="w-[300px] max-h-[400px] overflow-y-auto">
             {PRODUCTS.map((item, index) => (
               <DropdownMenuItem
-                key={item.id}
+                key={item._id}
                 className="px-3 flex items-center w-full gap-3"
                 onClick={() => handleClick(index)}
               >
@@ -63,11 +76,11 @@ export default function AddProducts() {
                   <p className="text-sm font-semibold leading-none">{item.title}</p>
                   <div className="flex items-center gap-2">
                     <p className="text-[#3A3A3A] text-[11px] font-semibold">
-                      {"Rs: " + item.price}
+                      {"$" + item.price}
                     </p>
-                    {item.type === "DISCOUNTED" && (
+                    {item.dicountPercentage > 0 && (
                       <p className="text-[#B0B0B0] line-through text-[11px]">
-                        {"Rs: " + item.otherPrice}
+                        - {item.dicountPercentage}%
                       </p>
                     )}
                   </div>

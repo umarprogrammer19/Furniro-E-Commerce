@@ -40,7 +40,7 @@ function CheckoutDetailSection() {
       <div className="mt-4 flex flex-col gap-3 justify-between">
         <div className="flex justify-between">
           <p className="text-customGray2 text-sm ">Total</p>
-          <p className="text-primary font-bold text-[20px]">$ {totalPrice}</p>
+          <p className="text-primary font-bold text-[20px]">${totalPrice}</p>
         </div>
       </div>
 

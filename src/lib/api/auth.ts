@@ -16,6 +16,7 @@ export async function loginUser(email: string, password: string) {
 
         return await response.json()
     } catch (error) {
+        console.log(error);
         throw new Error("Login failed")
     }
 }
@@ -37,6 +38,7 @@ export async function signupUser(fullname: string, email: string, password: stri
 
         return await response.json()
     } catch (error) {
+        console.log(error);
         throw new Error("Signup failed")
     }
 }

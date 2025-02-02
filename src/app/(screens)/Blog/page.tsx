@@ -1,7 +1,6 @@
 import Hero from "@/components/common/Hero";
 import BlogSection from "./sections/blog-section";
 import RecentBlog from "./sections/recent-blog";
-import { Separator } from "@/components/ui/separator";
 
 export default function BlogPage() {
   return (

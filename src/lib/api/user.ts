@@ -18,6 +18,7 @@ export async function getUser() {
         const data = await response.json();
         return data.user;
     } catch (error) {
+        console.log(error);
         throw new Error('Failed to fetch user data');
     }
 }

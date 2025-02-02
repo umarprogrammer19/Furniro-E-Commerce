@@ -33,7 +33,8 @@ export default function Login() {
             localStorage.setItem('accessToken', accessToken);
             router.push("/")
         } catch (err) {
-            setError("Invalid email or password")
+            console.log(err);
+            setError("Invalid email or password");
         } finally {
             setIsLoading(false)
         }

@@ -1,19 +1,24 @@
-import { getCookie } from 'cookies-next';
-import { NextResponse } from 'next/server';
-import { NextRequest } from 'next/server';
+import { NextResponse } from "next/server"
+import type { NextRequest } from "next/server"
 
 export async function middleware(req: NextRequest) {
     try {
-        const accessToken = getCookie('accessToken', { req });
+        const accessToken = req.cookies.get("accessToken")
         if (!accessToken) {
-            return NextResponse.redirect(new URL('/login', req.url));
+            const response = NextResponse.next()
+            response.headers.set("X-Need-Login", "true")
+            return response
         }
+        return NextResponse.next()
     } catch (error) {
-        console.log('Error during token verification:', error);
-        return NextResponse.redirect(new URL('/login', req.url));
+        console.log("Error during token verification:", error)
+        const response = NextResponse.next()
+        response.headers.set("X-Need-Login", "true")
+        return response
     }
 }
 
 export const config = {
-    matcher: [ '/checkout', '/profile'],
-};
+    matcher: ["/checkout", "/profile"],
+}
+

@@ -14,8 +14,8 @@ function ShareSetupSection() {
         <Image
           src="/images/share_your_setup.png"
           alt="share setup"
-          width={500}
-          height={500}
+          width={1200}
+          height={1200}
           className="w-full"
         />
       </div>

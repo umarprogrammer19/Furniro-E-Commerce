@@ -16,9 +16,10 @@ export default function CheckoutButton({ products, totalPrice }: CheckoutButtonP
             const response = await fetch(`${BASE_URL}/api/v4/checkout`, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
                 },
-                body: JSON.stringify({ products }),
+                body: JSON.stringify({ products, totalPrice }),
             });
 
             if (!response.ok) {
@@ -30,35 +31,17 @@ export default function CheckoutButton({ products, totalPrice }: CheckoutButtonP
             const stripe = await stripePromise;
             if (!stripe) throw new Error("Stripe.js failed to load");
 
-            const orderResponse = await fetch(`${BASE_URL}/api/v3/furniro-orders`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-                },
-                body: JSON.stringify({
-                    products,
-                    totalPrice,
-                }),
-            });
-
-            if (!orderResponse.ok) {
-                const orderError = await orderResponse.json();
-                throw new Error(orderError.error || "Failed to place order");
-            }
-
-            const orderData = await orderResponse.json();
-            alert("Order placed successfully!");
-            console.log("Order data:", orderData);
-
+            // Redirect to Stripe checkout
             const result = await stripe.redirectToCheckout({ sessionId: id });
 
             if (result.error) {
                 throw new Error(result.error.message);
             }
+
+            // Order will now be created via webhook after successful payment.
         } catch (error) {
-            console.error("Checkout or order error:", error);
-            alert("Something went wrong during checkout or order creation. Please try again.");
+            console.error("Checkout error:", error);
+            alert("Something went wrong during checkout. Please try again.");
         }
     };
 

@@ -63,7 +63,7 @@ export function ContactForm() {
               <FormLabel className="font-medium">Username</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="ex. John Doe"
+                  placeholder="ex. Umar Farooq"
                   {...field}
                   className="border-[1px] border-solid border-[#9F9F9F]"
                 />
@@ -80,7 +80,7 @@ export function ContactForm() {
               <FormLabel className="font-medium">Email Address</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="example@gmail.com"
+                  placeholder="umarofficial0121@gmail.com"
                   {...field}
                   className="border-[1px] border-solid border-[#9F9F9F]"
                 />

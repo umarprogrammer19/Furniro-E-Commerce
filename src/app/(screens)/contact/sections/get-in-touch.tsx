@@ -58,12 +58,12 @@ const card: Card[] = [
   {
     icon: "/images/det1.png",
     name: "Address",
-    details: ["236 5th SE Avenue, New York NY10000, United States"],
+    details: ["Karachi, Pakistan"],
   },
   {
     icon: "/images/det2.png",
     name: "Phone",
-    details: ["Mobile: +(84) 546-6789", "Hotline: +(84) 456-6789"],
+    details: ["Mobile: +(92) 317-2472531"],
   },
   {
     icon: "/images/det3.png",

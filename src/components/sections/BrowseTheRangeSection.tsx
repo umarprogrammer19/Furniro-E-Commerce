@@ -19,9 +19,9 @@ function BrowseTheRangeSection() {
   return (
     <section>
       <div>
-        <p className="text-[32px] font-bold text-center">Browse The Range</p>
+        <p className="text-[32px] font-bold text-center mt-5">Browse The Range</p>
         <p className="text-20 text-customGray text-center">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+        Discover a selection of carefully curated items designed to suit all styles.
         </p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-[20px] mt-[30px] md:mt-[62px]">
@@ -33,7 +33,7 @@ function BrowseTheRangeSection() {
                 alt="category image"
                 width={500}
                 height={500}
-                className="h-[480px] rounded-[10px] object-cover"
+                className="h-[480px] hover:scale-105 hover:grayscale transition-all duration-500 rounded-[10px] object-cover"
               />
             </div>
             <p className="text-[19px] text-customBlack font-semibold mt-[30px] text-center">

@@ -13,8 +13,7 @@ function HeroSection() {
           Discover Our <br /> New Collection
         </p>
         <p className="text-customGray text-[18px] mb-[46px]">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. <br />
-          Ut elit tellus, luctus nec ullamcorper mattis.
+          Transform your space with our latest designs! <br /> Each piece has been crafted to enhance your home.
         </p>
         <Link href={"/shop"}>
           <MainButton text="BUY NOW" classes="w-[222px]" />

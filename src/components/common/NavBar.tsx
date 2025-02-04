@@ -9,10 +9,12 @@ import { Badge } from "../ui/badge";
 import { cartAtom } from "@/lib/storage/jotai";
 import Image from "next/image";
 import { useSearch } from "@/context/searchContext";
+import { useRouter } from "next/navigation";
 
 function NavBar() {
   const [showCart, setShowCart] = useState(false);
   const [menu, setMenu] = useState(false);
+  const router = useRouter();
   const cartValue = useAtomValue(cartAtom);
   const { searchQuery, setSearchQuery } = useSearch();
 
@@ -27,12 +29,12 @@ function NavBar() {
     {
       iconUrl: "/images/user_icon.png",
       alt: "user icon",
-      action: () => console.log("You just clicked on the user icon"),
+      action: () => router.push("/profile"),
     },
     {
       iconUrl: "/images/heart_icon.png",
       alt: "heart icon",
-      action: () => console.log("You just clicked on the heart icon"),
+      action: () => router.push("/wishlist"),
     },
     {
       iconUrl: "/images/cart_icon.png",

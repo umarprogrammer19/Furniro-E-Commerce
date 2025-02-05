@@ -2,38 +2,42 @@
 import { useEffect } from "react";
 
 const Chatbot = () => {
-    useEffect(() => {
-        const appId = process.env.NEXT_PUBLIC_KOMMUNICATE_APP_ID;
+  useEffect(() => {
+    const appId = process.env.NEXT_PUBLIC_KOMMUNICATE_APP_ID;
 
-        if (!appId) {
-            console.error("Kommunicate App ID is missing in environment variables!");
-            return;
-        }
+    if (!appId) {
+      console.error("Kommunicate App ID is missing in environment variables!");
+      return;
+    }
 
-        const kommunicateSettings = {
-            appId,
-            popupWidget: true,
-            automaticChatOpenOnNavigation: true,
-        };
+    // Prevent adding multiple instances of the script
+    if (document.getElementById("kommunicate-script")) return;
 
-        const script = document.createElement("script");
-        script.type = "text/javascript";
-        script.async = true;
-        script.src = "https://widget.kommunicate.io/v2/kommunicate.app";
+    const kommunicateSettings = {
+      appId,
+      popupWidget: true,
+      automaticChatOpenOnNavigation: true,
+    };
 
-        script.onload = () => {
-            (window as any).kommunicate = (window as any).kommunicate || {};
-            (window as any).kommunicate._globals = kommunicateSettings;
-        };
+    const script = document.createElement("script");
+    script.id = "kommunicate-script";
+    script.type = "text/javascript";
+    script.async = true;
+    script.src = "https://widget.kommunicate.io/v2/kommunicate.app";
 
-        document.head.appendChild(script);
+    script.onload = () => {
+      (window as any).kommunicate = (window as any).kommunicate || {};
+      (window as any).kommunicate._globals = kommunicateSettings;
+    };
 
-        return () => {
-            document.head.removeChild(script);
-        };
-    }, []);
+    document.body.appendChild(script);
 
-    return null;
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
+  return null;
 };
 
 export default Chatbot;

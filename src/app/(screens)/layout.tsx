@@ -7,6 +7,7 @@ import { Toaster } from '@/components/ui/toaster'
 import LoadingIndicator from '@/components/common/LoadingIndicator'
 import { SearchProvider } from '@/context/searchContext'
 import { AuthWrapper } from '@/components/ui/AuthWrapper'
+import Chatbot from '@/components/chatbot-ai/chatbot'
 
 export const metadata: Metadata = {
   title: 'Furniro Ecommerce',
@@ -25,6 +26,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={poppin.className} >
         <main className="bg-white">
+          <Chatbot />
           <AuthWrapper>
             <SearchProvider>
               <LoadingIndicator />

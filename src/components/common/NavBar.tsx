@@ -1,6 +1,6 @@
 "use client";
-import { useState } from "react";
-import { MenuIcon, X } from "lucide-react";
+import { useState, useEffect } from "react";
+import { MenuIcon, X, LogOut } from "lucide-react"; // Import Logout Icon
 import Link from "next/link";
 import CartSection from "../sections/shop/CartSection";
 import { RemoveScroll } from "react-remove-scroll";
@@ -10,6 +10,7 @@ import { cartAtom } from "@/lib/storage/jotai";
 import Image from "next/image";
 import { useSearch } from "@/context/searchContext";
 import { useRouter } from "next/navigation";
+import Cookies from "js-cookie"; // Import for handling cookies
 
 function NavBar() {
   const [showCart, setShowCart] = useState(false);
@@ -17,6 +18,26 @@ function NavBar() {
   const router = useRouter();
   const cartValue = useAtomValue(cartAtom);
   const { searchQuery, setSearchQuery } = useSearch();
+
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  // Check if user is logged in (Token exists)
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken") || Cookies.get("accessToken");
+    setIsAuthenticated(!!token);
+  }, []);
+
+  const handleLogout = () => {
+    // Clear localStorage & cookies
+    localStorage.removeItem("accessToken");
+    Cookies.remove("accessToken");
+
+    // Redirect to login page
+    router.push("/login");
+
+    // Update auth state
+    setIsAuthenticated(false);
+  };
 
   const links = [
     { title: "Home", link: "/" },
@@ -34,7 +55,7 @@ function NavBar() {
     {
       iconUrl: "/images/heart_icon.png",
       alt: "heart icon",
-      action: () => router.push("/wishlist"),
+      action: () => console.log("Wishlist"),
     },
     {
       iconUrl: "/images/cart_icon.png",
@@ -51,13 +72,11 @@ function NavBar() {
   return (
     <div className="relative">
       <div className="md:sticky md:top-0 md:shadow-none z-20 relative">
-        {/* DESKTOP */}
+        {/* DESKTOP NAVBAR */}
         <div className="hidden lg:block animate-in fade-in zoom-in bg-white p-4">
           <div className="flex justify-between mx-[41px] items-center">
             <Link href="/">
-              <div>
-                <Image src="/images/logo.png" width={150} height={60} alt="logo" />
-              </div>
+              <Image src="/images/logo.png" width={150} height={60} alt="logo" />
             </Link>
 
             <div className="flex gap-[20px] xl:gap-[50px] text-[16px] items-center select-none">
@@ -76,7 +95,7 @@ function NavBar() {
               <input
                 type="text"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)} // Set search query
+                onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search Products"
                 className="px-2 py-1 border rounded"
               />
@@ -98,19 +117,25 @@ function NavBar() {
                     >
                       {icon?.badgeValue}
                     </Badge>
-                  ) : (
-                    <div></div>
-                  )}
+                  ) : null}
                 </div>
               ))}
+
+              {/* Logout Button (Only if authenticated) */}
+              {isAuthenticated && (
+                <LogOut
+                  className="cursor-pointer text-red-500 hover:text-red-700"
+                  size={24}
+                  onClick={handleLogout}
+                />
+              )}
             </div>
           </div>
         </div>
 
-        {/* MOBILE */}
+        {/* MOBILE NAVBAR */}
         <div
-          className={` block lg:hidden shadow-sm  fixed top-0 w-full z-[999] bg-white py-4 animate-in fade-in zoom-in  ${menu ? " !bg-[#FFF3E3] py-2" : ""
-            } `}
+          className={`block lg:hidden shadow-sm fixed top-0 w-full z-[999] bg-white py-4 animate-in fade-in zoom-in ${menu ? "!bg-[#FFF3E3] py-2" : ""}`}
         >
           <div className="flex justify-between mx-[10px]">
             <div className="flex gap-[50px] text-[16px] items-center select-none">
@@ -118,28 +143,17 @@ function NavBar() {
             </div>
             <div className="flex items-center gap-[40px]">
               {menu ? (
-                <X
-                  className="cursor-pointer animate-in fade-in zoom-in text-black"
-                  onClick={toggleMenu}
-                />
+                <X className="cursor-pointer animate-in fade-in zoom-in text-black" onClick={toggleMenu} />
               ) : (
-                <MenuIcon
-                  onClick={toggleMenu}
-                  className="cursor-pointer animate-in fade-in zoom-in"
-                />
+                <MenuIcon onClick={toggleMenu} className="cursor-pointer animate-in fade-in zoom-in" />
               )}
             </div>
           </div>
           {menu ? (
             <div className="my-8 select-none animate-in slide-in-from-right">
               <div className="flex flex-col gap-8 mt-8 mx-4">
-                {/* Add more links here */}
                 {links.map((link, index) => (
-                  <Link
-                    key={index}
-                    href={link.link}
-                    className="text-black cursor-pointer"
-                  >
+                  <Link key={index} href={link.link} className="text-black cursor-pointer">
                     <p>{link.title}</p>
                   </Link>
                 ))}
@@ -156,14 +170,22 @@ function NavBar() {
                       className="cursor-pointer w-[28px] h-[28px] object-contain"
                     />
                   ))}
+
+                  {/* Logout Button in Mobile Navbar */}
+                  {isAuthenticated && (
+                    <LogOut
+                      className="cursor-pointer text-red-500 hover:text-red-700 mt-4"
+                      size={24}
+                      onClick={handleLogout}
+                    />
+                  )}
                 </div>
               </div>
             </div>
-          ) : (
-            <div></div>
-          )}
+          ) : null}
         </div>
       </div>
+
       {showCart && (
         <div
           className="hidden md:block absolute animate-out left-0 right-0 top-0 h-screen bg-black/20 z-[99]"

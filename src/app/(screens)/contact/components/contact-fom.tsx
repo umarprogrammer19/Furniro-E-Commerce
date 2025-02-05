@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useState } from "react";
-import toast from "react-hot-toast"; 
+import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { BASE_URL } from "@/lib/api/baseUrl";
 
 const formSchema = z.object({
   name: z.string().min(3, {
@@ -45,11 +46,11 @@ export function ContactForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
-    
-    const toastId = toast.loading("Submitting your message..."); 
+
+    const toastId = toast.loading("Submitting your message...");
 
     try {
-      const response = await fetch("http://localhost:8080/api/v5/contact", {
+      const response = await fetch(`${BASE_URL}/api/v5/contact`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

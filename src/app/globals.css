@@ -68,3 +68,11 @@
     @apply bg-background text-foreground;
   }
 }
+
+.kommunicate-widget-iframe {
+  bottom: 20px !important;
+  right: 20px !important;
+  width: 60px !important;
+  height: 60px !important;
+  z-index: 99999 !important;
+}

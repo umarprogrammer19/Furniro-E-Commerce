@@ -26,28 +26,29 @@ export default function Profile() {
     const [orders, setOrders] = useState<Order[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
-    const router = useRouter();
 
     useEffect(() => {
         async function loadUserData() {
             const token = localStorage.getItem("accessToken") || Cookies.get("accessToken");
 
+            // 1. If no token, just set an error state and stop (let your popup handle the rest)
             if (!token) {
-                router.push("/login");
+                setError("Please log in to view your profile and orders.");
+                setIsLoading(false);
                 return;
             }
 
             try {
+                // Fetch user profile
                 const userResponse = await fetch(`${BASE_URL}/api/v1/getUser`, {
                     method: "GET",
                     headers: {
-                        Authorization: `Bearer ${token}`, // Use the local variable
+                        Authorization: `Bearer ${token}`,
                     },
                 });
 
                 if (!userResponse.ok) {
-                    // If the backend returns 401, the token might be expired
-                    if (userResponse.status === 401) {
+                    if (userResponse.status === 401 || userResponse.status === 404) {
                         throw new Error("unauthorized");
                     }
                     throw new Error("Failed to fetch user profile");
@@ -56,11 +57,11 @@ export default function Profile() {
                 const userData = await userResponse.json();
                 setUser(userData.user);
 
-                // Fetch user orders
+                // Fetch user orders (Updated to the correct /orders URL!)
                 const ordersResponse = await fetch(`${BASE_URL}/api/v3/orders`, {
                     method: "GET",
                     headers: {
-                        Authorization: `Bearer ${token}`, // using the local token variable
+                        Authorization: `Bearer ${token}`,
                     },
                 });
 
@@ -71,10 +72,10 @@ export default function Profile() {
             } catch (err) {
                 console.error("Profile fetch error:", err);
                 if (err instanceof Error && err.message === "unauthorized") {
-                    // Clear invalid tokens and redirect
+                    // Clear invalid tokens but DO NOT redirect
                     localStorage.removeItem("accessToken");
                     Cookies.remove("accessToken");
-                    router.push("/login");
+                    setError("Session expired. Please log in again.");
                 } else {
                     setError("Failed to load user data");
                 }
@@ -84,7 +85,7 @@ export default function Profile() {
         }
 
         loadUserData();
-    }, [router]); // accessToken state removed, no longer needed as a dependency
+    }, []); 
 
     if (error) {
         return (

@@ -32,7 +32,7 @@ export default function Profile() {
     // Check if user is logged in (Token exists)
     useEffect(() => {
         const token = localStorage.getItem("accessToken") || Cookies.get("accessToken");
-        setAccessToken(token)
+        setAccessToken(token ? token : "")
     }, []);
 
     useEffect(() => {

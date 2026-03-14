@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
 import { BASE_URL } from "@/lib/api/baseUrl";
-import Cookies from "js-cookie"; // Import for handling cookies
+import Cookies from "js-cookie";
 
 interface User {
     id: string;
@@ -26,44 +26,54 @@ export default function Profile() {
     const [orders, setOrders] = useState<Order[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
-    const [accessToken, setAccessToken] = useState("")
     const router = useRouter();
-
-    // Check if user is logged in (Token exists)
-    useEffect(() => {
-        const token = localStorage.getItem("accessToken") || Cookies.get("accessToken");
-        setAccessToken(token ? token : "")
-    }, []);
 
     useEffect(() => {
         async function loadUserData() {
+            const token = localStorage.getItem("accessToken") || Cookies.get("accessToken");
+
+            if (!token) {
+                router.push("/login");
+                return;
+            }
+
             try {
-                console.log(accessToken)
-                // Fetch user profile
                 const userResponse = await fetch(`${BASE_URL}/api/v1/getUser`, {
                     method: "GET",
                     headers: {
-                        Authorization: `Bearer ${accessToken}`,
+                        Authorization: `Bearer ${token}`, // Use the local variable
                     },
                 });
 
-                if (!userResponse.ok) throw new Error("Failed to fetch user profile");
+                if (!userResponse.ok) {
+                    // If the backend returns 401, the token might be expired
+                    if (userResponse.status === 401) {
+                        throw new Error("unauthorized");
+                    }
+                    throw new Error("Failed to fetch user profile");
+                }
+
                 const userData = await userResponse.json();
                 setUser(userData.user);
 
                 // Fetch user orders
-                const ordersResponse = await fetch(`${BASE_URL}/api/v3/furniro-orders`, {
+                const ordersResponse = await fetch(`${BASE_URL}/api/v3/orders`, {
                     method: "GET",
                     headers: {
-                        Authorization: `Bearer ${accessToken}`,
+                        Authorization: `Bearer ${token}`, // using the local token variable
                     },
                 });
 
                 if (!ordersResponse.ok) throw new Error("Failed to fetch user orders");
                 const ordersData = await ordersResponse.json();
                 setOrders(ordersData.orders);
+
             } catch (err) {
-                if (err instanceof Error && err.message === "No access token found") {
+                console.error("Profile fetch error:", err);
+                if (err instanceof Error && err.message === "unauthorized") {
+                    // Clear invalid tokens and redirect
+                    localStorage.removeItem("accessToken");
+                    Cookies.remove("accessToken");
                     router.push("/login");
                 } else {
                     setError("Failed to load user data");
@@ -74,7 +84,7 @@ export default function Profile() {
         }
 
         loadUserData();
-    }, [router]);
+    }, [router]); // accessToken state removed, no longer needed as a dependency
 
     if (error) {
         return (
@@ -94,9 +104,9 @@ export default function Profile() {
                                 {isLoading
                                     ? "..."
                                     : user?.fullname
-                                        .split(" ")
+                                        ?.split(" ")
                                         .map((n) => n[0])
-                                        .join("")}
+                                        .join("") || "U"}
                             </AvatarFallback>
                         </Avatar>
                     </div>

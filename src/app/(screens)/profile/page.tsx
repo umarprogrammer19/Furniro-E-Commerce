@@ -26,7 +26,7 @@ export default function Profile() {
     const [orders, setOrders] = useState<Order[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
-    const [accessToken, setAccessToken] = useState(null)
+    const [accessToken, setAccessToken] = useState("")
     const router = useRouter();
 
     // Check if user is logged in (Token exists)

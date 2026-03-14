@@ -38,6 +38,7 @@ export default function Profile() {
     useEffect(() => {
         async function loadUserData() {
             try {
+                console.log(accessToken)
                 // Fetch user profile
                 const userResponse = await fetch(`${BASE_URL}/api/v1/getUser`, {
                     method: "GET",

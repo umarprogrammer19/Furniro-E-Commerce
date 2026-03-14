@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
 import { BASE_URL } from "@/lib/api/baseUrl";
+import Cookies from "js-cookie"; // Import for handling cookies
 
 interface User {
     id: string;
@@ -25,7 +26,14 @@ export default function Profile() {
     const [orders, setOrders] = useState<Order[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState("");
+    const [accessToken, setAccessToken] = useState(null)
     const router = useRouter();
+
+    // Check if user is logged in (Token exists)
+    useEffect(() => {
+        const token = localStorage.getItem("accessToken") || Cookies.get("accessToken");
+        setAccessToken(token)
+    }, []);
 
     useEffect(() => {
         async function loadUserData() {
@@ -34,7 +42,7 @@ export default function Profile() {
                 const userResponse = await fetch(`${BASE_URL}/api/v1/getUser`, {
                     method: "GET",
                     headers: {
-                        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+                        Authorization: `Bearer ${accessToken}`,
                     },
                 });
 
@@ -46,7 +54,7 @@ export default function Profile() {
                 const ordersResponse = await fetch(`${BASE_URL}/api/v3/furniro-orders`, {
                     method: "GET",
                     headers: {
-                        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+                        Authorization: `Bearer ${accessToken}`,
                     },
                 });
 

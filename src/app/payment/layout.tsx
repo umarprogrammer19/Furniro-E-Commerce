@@ -1,7 +1,6 @@
 import "../globals.css"
 export const metadata = {
   title: 'Payment',
-  description: 'Payment Gateway',
 }
 
 export default function RootLayout({

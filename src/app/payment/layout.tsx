@@ -1,6 +1,6 @@
 import "../globals.css"
 export const metadata = {
-  title: 'Payment',
+  title: 'Payment Gateway',
   description: 'Payment Gateway',
 }
 

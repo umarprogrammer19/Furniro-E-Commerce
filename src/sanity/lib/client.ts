@@ -7,5 +7,5 @@ export const client = createClient({
   dataset,
   apiVersion,
   useCdn: true,
-  token: process.env.SECRET_API_TOKEN
+  token: process.env.SECRET_API_TOKEN // For Developer Options
 })

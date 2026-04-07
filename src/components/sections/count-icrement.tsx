@@ -1,11 +1,22 @@
 import { Button } from "@/components/ui/button";
 
+interface ComponentProp {
+  increaseFunction: () => void;
+  decreaseFunction: () => void;
+  count: number;
+  type?: "cart";
+  maxCount?: number;
+}
+
 export default function CountIncrement({
   increaseFunction,
   decreaseFunction,
   count,
   type,
+  maxCount,
 }: ComponentProp) {
+  const isMaxReached = maxCount !== undefined && count >= maxCount;
+
   return (
     <div
       className={`flex items-center ${
@@ -15,24 +26,18 @@ export default function CountIncrement({
       <Button
         className="py-1 px-2 h-fit bg-transparent hover:bg-lightOrange transition-all duration-300 text-black"
         onClick={decreaseFunction}
-        disabled={count === 1 ? true : false}
+        disabled={count === 1}
       >
         -
       </Button>
       <p className="text-[13px] sm:text-base font-medium">{count}</p>
       <Button
         onClick={increaseFunction}
-        className="py-1 px-2 h-fit bg-transparent hover:bg-lightOrange transition-all duration-300 text-black"
+        disabled={isMaxReached}
+        className="py-1 px-2 h-fit bg-transparent hover:bg-lightOrange transition-all duration-300 text-black disabled:opacity-50 disabled:cursor-not-allowed"
       >
         +
       </Button>
     </div>
   );
-}
-
-interface ComponentProp {
-  increaseFunction: () => void;
-  decreaseFunction: () => void;
-  count: number;
-  type?: "cart";
 }

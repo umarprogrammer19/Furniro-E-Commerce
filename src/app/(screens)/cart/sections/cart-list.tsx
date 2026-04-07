@@ -1,8 +1,13 @@
 "use client"
+
+import { useEffect } from "react";
+import { useAtom } from "jotai";
+import Image from "next/image";
 import BinIcon from "@/components/icons/bin-icon";
 import CountIncrement from "@/components/sections/count-icrement";
 import EmptyCartState from "@/components/sections/empty-cart-state";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 import {
   Table,
   TableBody,
@@ -11,46 +16,110 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ImportedData } from "@/types";
-import Image from "next/image";
-import { useEffect, useState } from "react";
-
+import { ICart } from "@/types";
+import { cartAtom } from "@/lib/storage/jotai";
+import { getSingleProduct } from "@/lib/api/products";
 
 export default function CartList() {
-  const [cartItems, setCartItems] = useState<ImportedData[]>([]);
-
-  useEffect(() => {
-    const storedCart = localStorage.getItem("CART_ITEMS");
-    if (storedCart) {
-      setCartItems(JSON.parse(storedCart));
-    }
-  }, [cartItems]);
-
-  const updateCart = (updatedCart: ImportedData[]) => {
-    localStorage.setItem("CART_ITEMS", JSON.stringify(updatedCart));
-    setCartItems(updatedCart);
-  };
+  const [cartItems, setCartItems] = useAtom(cartAtom);
+  const { toast } = useToast();
 
   const removeFromCart = (id: string) => {
     const updatedCart = cartItems.filter((item) => item._id !== id);
-    updateCart(updatedCart);
+    setCartItems(updatedCart);
+    toast({
+      title: "Removed",
+      description: "Item removed from cart.",
+    });
   };
 
-  const increaseItemCount = (id: string) => {
-    const updatedCart = cartItems.map((item) =>
-      item.quantity && item._id === id ? { ...item, quantity: item.quantity + 1 } : item
-    );
-    updateCart(updatedCart);
+  const increaseItemCount = async (item: ICart) => {
+    // Check current stock from server
+    try {
+      const product = await getSingleProduct(item._id);
+
+      if (item.quantity >= product.stock) {
+        toast({
+          title: "Stock Limit Reached",
+          description: `Only ${product.stock} items available in stock.`,
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const updatedCart = cartItems.map((cartItem) =>
+        cartItem._id === item._id
+          ? { ...cartItem, quantity: cartItem.quantity + 1 }
+          : cartItem
+      );
+      setCartItems(updatedCart);
+    } catch (error) {
+      console.error("Error checking stock:", error);
+      // If we can't verify stock, still allow increment if we have stock data cached
+      if (item.stock && item.quantity >= item.stock) {
+        toast({
+          title: "Stock Limit Reached",
+          description: `Only ${item.stock} items available in stock.`,
+          variant: "destructive",
+        });
+        return;
+      }
+      const updatedCart = cartItems.map((cartItem) =>
+        cartItem._id === item._id
+          ? { ...cartItem, quantity: cartItem.quantity + 1 }
+          : cartItem
+      );
+      setCartItems(updatedCart);
+    }
   };
 
   const decreaseItemCount = (id: string) => {
     const updatedCart = cartItems.map((item) =>
-      item._id === id && item.quantity! > 1
-        ? { ...item, quantity: (item.quantity && item.quantity - 1) }
+      item._id === id && item.quantity > 1
+        ? { ...item, quantity: item.quantity - 1 }
         : item
     );
-    updateCart(updatedCart);
+    setCartItems(updatedCart);
   };
+
+  // Validate cart on mount - remove items with 0 stock
+  useEffect(() => {
+    const validateCart = async () => {
+      const validatedCart: ICart[] = [];
+
+      for (const item of cartItems) {
+        try {
+          const product = await getSingleProduct(item._id);
+          if (product.stock > 0) {
+            // Update stock info and ensure quantity doesn't exceed available stock
+            validatedCart.push({
+              ...item,
+              stock: product.stock,
+              quantity: Math.min(item.quantity, product.stock),
+            });
+          } else {
+            toast({
+              title: "Item Unavailable",
+              description: `${item.title} is now out of stock and has been removed from your cart.`,
+              variant: "destructive",
+            });
+          }
+        } catch (error) {
+          console.error(`Error validating cart item ${item._id}:`, error);
+          // Keep item if we can't verify
+          validatedCart.push(item);
+        }
+      }
+
+      if (validatedCart.length !== cartItems.length) {
+        setCartItems(validatedCart);
+      }
+    };
+
+    if (cartItems.length > 0) {
+      validateCart();
+    }
+  }, []); // Run once on mount
 
   if (cartItems.length === 0) {
     return <EmptyCartState />;
@@ -82,21 +151,26 @@ export default function CartList() {
                   <div className="flex flex-col">
                     <p>{item.title}</p>
                     <p className="text-[#9F9F9F] text-xs flex sm:hidden">
-                      ${(item.quantity! * Number(item.price)).toLocaleString()}
+                      ${(item.quantity * item.price).toLocaleString()}
                     </p>
+                    {/* Stock indicator */}
+                    {item.stock && item.quantity >= item.stock && (
+                      <p className="text-error text-xs">Max stock reached</p>
+                    )}
                   </div>
                 </div>
               </TableCell>
               <TableCell className="text-myBlack hidden sm:table-cell align-middle">
-                ${Number(item.price).toLocaleString()}
+                ${item.price.toLocaleString()}
               </TableCell>
               <TableCell>
-                {item.quantity && <CountIncrement
-                  increaseFunction={() => increaseItemCount(item._id)}
+                <CountIncrement
+                  increaseFunction={() => increaseItemCount(item)}
                   decreaseFunction={() => decreaseItemCount(item._id)}
                   count={item.quantity}
                   type="cart"
-                />}
+                  maxCount={item.stock}
+                />
               </TableCell>
               <TableCell className="text-center">
                 <Button

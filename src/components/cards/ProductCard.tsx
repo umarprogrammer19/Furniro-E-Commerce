@@ -14,8 +14,9 @@ function ProductCard({
   imageUrl,
   price,
   description,
-  dicountPercentage,
+  discountPercentage,
   isNew,
+  stock,
 }: ImportedData) {
   const router = useRouter();
 
@@ -47,6 +48,8 @@ function ProductCard({
     animate: { opacity: 1, x: 0, scale: 1 },
   };
 
+  const isOutOfStock = stock === 0;
+
   return (
     <motion.div
       initial="initial"
@@ -54,7 +57,7 @@ function ProductCard({
       whileHover="animate"
       viewport={{ once: false }}
       transition={{ duration: 0.4 }}
-      className="relative"
+      className={cn("relative", isOutOfStock && "opacity-60")}
     >
       <div className="relative">
         <Image
@@ -65,18 +68,34 @@ function ProductCard({
           className="h-[301px] w-full object-cover rounded-md"
         />
 
-        {dicountPercentage !== undefined && (
+        {/* Out of Stock Badge */}
+        {isOutOfStock && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-md">
+            <span className="bg-error text-white px-4 py-2 font-bold text-lg">
+              Out of Stock
+            </span>
+          </div>
+        )}
+
+        {discountPercentage !== undefined && discountPercentage > 0 && !isOutOfStock && (
           <div
             className={cn(
               "absolute top-[24px] right-[24px] w-[48px] h-[48px] rounded-full text-sm font-medium flex justify-center items-center",
-              dicountPercentage > 0 ? "bg-success text-white" : isNew ? "bg-primary text-white" : ""
+              "bg-success text-white"
             )}
           >
-            {dicountPercentage > 0
-              ? `-${dicountPercentage}%`
-              : isNew
-                ? "NEW"
-                : ""}
+            -{discountPercentage}%
+          </div>
+        )}
+
+        {isNew && !isOutOfStock && discountPercentage === 0 && (
+          <div
+            className={cn(
+              "absolute top-[24px] right-[24px] w-[48px] h-[48px] rounded-full text-sm font-medium flex justify-center items-center",
+              "bg-primary text-white"
+            )}
+          >
+            NEW
           </div>
         )}
       </div>
@@ -86,10 +105,15 @@ function ProductCard({
           {title}
         </p>
         <p className="text-customGray font-medium text-sm py-2">
-          {description.slice(0, 158)}...
+          {description?.slice(0, 158)}...
         </p>
         <div className="flex justify-between items-center">
           <p className="text-customBlack text-lg font-semibold">${price}</p>
+          {!isOutOfStock ? (
+            <p className="text-success text-sm font-medium">{stock} in stock</p>
+          ) : (
+            <p className="text-error text-sm font-medium">Out of stock</p>
+          )}
         </div>
       </div>
 
@@ -103,9 +127,10 @@ function ProductCard({
         <div className="pt-[30%]">
           <div className="flex justify-center">
             <MainButton
-              text="View Product"
-              classes="bg-white text-primary font-bold hover:bg-white px-4 py-2"
+              text={isOutOfStock ? "Out of Stock" : "View Product"}
+              classes="bg-white text-primary font-bold hover:bg-white px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed"
               action={() => router.push(`/shop/product/${_id}`)}
+              disabled={isOutOfStock}
             />
           </div>
           <div className="flex justify-center gap-5 mt-6">

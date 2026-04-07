@@ -8,69 +8,95 @@ import { useToast } from '@/components/ui/use-toast'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { cartAtom } from '@/lib/storage/jotai'
-import { client } from '@/sanity/lib/client'
-import { ImportedData } from '@/types'
 import Loading from '@/components/common/loading'
-
-// const MAX_QUANTITY = Math.floor(Math.random() * 15 + 1);
+import { getSingleProduct, ProductFromAPI } from '@/lib/api/products'
 
 export default function ProductDetailShowcaseSection({
   productId,
 }: {
   productId: string
 }) {
-  const [MAX_QUANTITY, setMAX_QUANTITY] = useState<number>(1);
   const [quantity, setQuantity] = useState(1)
-  const [specificProduct, setSpecificProduct] = useState<ImportedData | null>(null)
-  const [cart, setCart] = useAtom(cartAtom);
-  const { toast } = useToast();
+  const [specificProduct, setSpecificProduct] = useState<ProductFromAPI | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [cart, setCart] = useAtom(cartAtom)
+  const { toast } = useToast()
 
   useEffect(() => {
-    const fetchDataFromSanity = async () => {
+    const fetchProduct = async () => {
       try {
-        const query = `*[_type == "product" && _id == $productId][0]{
-          _id,
-          title,
-          "imageUrl": imageUrl.asset->url,
-          price,
-          tags,
-          category,
-          description,
-          discountPercentage,
-          isNew
-        }`
-        const product = await client.fetch(query, { productId });
-        setSpecificProduct(product);
-        setMAX_QUANTITY(Math.floor(Math.random() * 15 + 1));
+        setIsLoading(true)
+        const product = await getSingleProduct(productId)
+        setSpecificProduct(product)
       } catch (error) {
-        console.error('Error fetching data from Sanity:', error)
+        console.error('Error fetching product:', error)
         toast({
           title: 'Error',
           description: 'Failed to load product details. Please try again.',
           variant: 'destructive',
         })
+      } finally {
+        setIsLoading(false)
       }
     }
-    fetchDataFromSanity()
+    fetchProduct()
   }, [productId, toast])
 
   const handleQuantityChange = (increment: number) => {
-    setQuantity((prev) => Math.max(1, Math.min(prev + increment, MAX_QUANTITY)))
+    if (!specificProduct) return
+
+    const newQuantity = quantity + increment
+    if (newQuantity < 1) {
+      setQuantity(1)
+    } else if (newQuantity > specificProduct.stock) {
+      toast({
+        title: 'Maximum Stock Reached',
+        description: `Only ${specificProduct.stock} items available in stock.`,
+        variant: 'destructive',
+      })
+    } else {
+      setQuantity(newQuantity)
+    }
   }
 
   const handleAddToCart = () => {
     if (!specificProduct) return
 
+    // Check if product is out of stock
+    if (specificProduct.stock === 0) {
+      toast({
+        title: 'Out of Stock',
+        description: 'This product is currently out of stock.',
+        variant: 'destructive',
+      })
+      return
+    }
+
+    // Check if adding quantity would exceed stock
+    const existingCartItem = cart.find((item) => item._id === specificProduct._id)
+    const currentQuantityInCart = existingCartItem?.quantity || 0
+    const totalQuantityAfterAdd = currentQuantityInCart + quantity
+
+    if (totalQuantityAfterAdd > specificProduct.stock) {
+      toast({
+        title: 'Stock Limit Exceeded',
+        description: `You already have ${currentQuantityInCart} in cart. Only ${specificProduct.stock} items available in stock.`,
+        variant: 'destructive',
+      })
+      return
+    }
+
     const productObject = {
       _id: specificProduct._id,
       imageUrl: specificProduct.imageUrl,
       title: specificProduct.title,
-      quantity,
+      quantity: totalQuantityAfterAdd,
       price: Number(specificProduct.price),
+      stock: specificProduct.stock, // Track stock in cart
     }
 
     setCart((prev) => {
-      const existingProductIndex = prev.findIndex((item: { _id: string }) => item._id === productObject._id)
+      const existingProductIndex = prev.findIndex((item) => item._id === productObject._id)
       if (existingProductIndex !== -1) {
         const updatedCart = [...prev]
         updatedCart[existingProductIndex] = productObject
@@ -81,15 +107,23 @@ export default function ProductDetailShowcaseSection({
 
     toast({
       title: 'Added to Cart!',
-      description: `${specificProduct.title} added to your cart.`,
-    });
+      description: `${specificProduct.title} (${quantity} item${quantity > 1 ? 's' : ''}) added to your cart.`,
+    })
+  }
 
-    console.log(cart);
+  if (isLoading) {
+    return <Loading />
   }
 
   if (!specificProduct) {
-    return <Loading />
+    return (
+      <div className="text-center py-20">
+        <p className="text-customGray text-lg">Product not found.</p>
+      </div>
+    )
   }
+
+  const isOutOfStock = specificProduct.stock === 0
 
   return (
     <section className="container mx-auto px-4 py-12">
@@ -115,7 +149,7 @@ export default function ProductDetailShowcaseSection({
           </div>
 
           {/* Main Image */}
-          <div className="aspect-square overflow-hidden rounded-lg bg-gray-100 flex-1">
+          <div className="aspect-square overflow-hidden rounded-lg bg-gray-100 flex-1 relative">
             <Image
               src={specificProduct.imageUrl || "/placeholder.svg"}
               alt={specificProduct.title}
@@ -123,6 +157,13 @@ export default function ProductDetailShowcaseSection({
               height={600}
               className="w-full h-full object-cover"
             />
+            {isOutOfStock && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+                <span className="bg-error text-white px-6 py-3 font-bold text-xl">
+                  Out of Stock
+                </span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -134,6 +175,20 @@ export default function ProductDetailShowcaseSection({
             <p className="text-2xl font-semibold text-gray-900 mt-2">
               $ {Number(specificProduct.price).toLocaleString()}
             </p>
+            {/* Stock Status */}
+            <div className="mt-3">
+              {isOutOfStock ? (
+                <span className="text-error font-semibold">Out of Stock</span>
+              ) : specificProduct.stock <= 5 ? (
+                <span className="text-orange-500 font-semibold">
+                  Only {specificProduct.stock} left in stock - order soon!
+                </span>
+              ) : (
+                <span className="text-success font-semibold">
+                  In Stock ({specificProduct.stock} available)
+                </span>
+              )}
+            </div>
           </div>
 
           {/* Reviews */}
@@ -157,7 +212,7 @@ export default function ProductDetailShowcaseSection({
                 variant="ghost"
                 size="icon"
                 onClick={() => handleQuantityChange(-1)}
-                disabled={quantity <= 1}
+                disabled={quantity <= 1 || isOutOfStock}
                 className="text-gray-600 hover:text-gray-900"
               >
                 <MinusIcon className="h-4 w-4" />
@@ -167,14 +222,18 @@ export default function ProductDetailShowcaseSection({
                 variant="ghost"
                 size="icon"
                 onClick={() => handleQuantityChange(1)}
-                disabled={quantity >= MAX_QUANTITY}
+                disabled={quantity >= specificProduct.stock || isOutOfStock}
                 className="text-gray-600 hover:text-gray-900"
               >
                 <PlusIcon className="h-4 w-4" />
               </Button>
             </div>
-            <Button onClick={handleAddToCart} className="flex-1">
-              Add to Cart
+            <Button
+              onClick={handleAddToCart}
+              className="flex-1"
+              disabled={isOutOfStock}
+            >
+              {isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
             </Button>
           </div>
 
@@ -184,16 +243,21 @@ export default function ProductDetailShowcaseSection({
           <div className="space-y-2 text-sm">
             <div className="flex">
               <span className="text-gray-500 font-medium w-24">Category:</span>
-              <span className="text-gray-900">{specificProduct.category || "Not Specified"}</span>
+              <span className="text-gray-900 capitalize">{specificProduct.category || "Not Specified"}</span>
             </div>
             <div className="flex">
               <span className="text-gray-500 font-medium w-24">Tags:</span>
-              <span className="text-gray-900">{specificProduct.tags.join(', ')}</span>
+              <span className="text-gray-900">{specificProduct.tags?.join(', ') || "N/A"}</span>
             </div>
+            {specificProduct.discountPercentage > 0 && (
+              <div className="flex">
+                <span className="text-gray-500 font-medium w-24">Discount:</span>
+                <span className="text-success font-semibold">{specificProduct.discountPercentage}% OFF</span>
+              </div>
+            )}
           </div>
         </div>
       </div>
     </section>
   )
 }
-

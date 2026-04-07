@@ -1,17 +1,10 @@
 "use client";
 
-import { ICart } from "@/types";
-import { useEffect, useState } from "react";
+import { useAtom } from "jotai";
+import { cartAtom } from "@/lib/storage/jotai";
 
 export default function CartTotals() {
-  const [cartItems, setCartItems] = useState<ICart[]>([]);
-
-  useEffect(() => {
-    const storedCart = localStorage.getItem("CART_ITEMS");
-    if (storedCart) {
-      setCartItems(JSON.parse(storedCart));
-    }
-  }, [cartItems]);
+  const [cartItems] = useAtom(cartAtom);
 
   const calculateTotal = () =>
     cartItems.reduce((total, item) => total + item.quantity * item.price, 0);
@@ -28,7 +21,7 @@ export default function CartTotals() {
         <div className="w-full flex flex-col gap-2">
           {cartItems.map((item, index) => (
             <div key={index} className="flex items-center justify-between">
-              <p className="text-sm text-myBlack">{item.title}</p>
+              <p className="text-sm text-myBlack truncate max-w-[150px]">{item.title}</p>
               <p className="text-[#9F9F9F] font-medium text-sm">
                 ${item.price.toLocaleString()} X {item.quantity}
               </p>
@@ -36,12 +29,17 @@ export default function CartTotals() {
           ))}
           <div className="flex items-center justify-between mt-2 pt-3 border-t border-myOrange">
             <p className="text-myBlack">Total:</p>
-            <p className="text-myOrange">${calculateTotal().toLocaleString()}</p>
+            <p className="text-myOrange font-semibold">${calculateTotal().toLocaleString()}</p>
           </div>
         </div>
       </div>
 
-      <button onClick={() => window.location.href = "/checkout"} className="w-[90%] bg-white py-2 text-center border border-myOrange text-sm font-medium text-myOrange hover:bg-lightOrange hover:text-myOrange">Checkout</button>
+      <button
+        onClick={() => (window.location.href = "/checkout")}
+        className="w-[90%] bg-white py-2 text-center border border-myOrange text-sm font-medium text-myOrange hover:bg-lightOrange hover:text-myOrange rounded-md transition-colors"
+      >
+        Checkout
+      </button>
     </div>
   );
 }

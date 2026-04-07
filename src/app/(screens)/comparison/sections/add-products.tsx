@@ -1,8 +1,7 @@
 "use client";
 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { client } from "@/sanity/lib/client";
-import { query } from "@/utils/query";
+import { getProducts, ProductFromAPI } from "@/lib/api/products";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import Products from "./compared-products";
@@ -17,20 +16,25 @@ export type Products = {
   type?: string;
   typeValue?: string;
 };
+
 export default function AddProducts() {
   const [comparison, setComparison] = useState<any[]>([]);
-  const [PRODUCTS, setPRODUCTS] = useState<any[]>([]);
+  const [PRODUCTS, setPRODUCTS] = useState<ProductFromAPI[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchDataFromSanity = async () => {
+    const fetchProducts = async () => {
       try {
-        const PRODUCTS = await client.fetch(query);
-        setPRODUCTS(PRODUCTS);
+        setIsLoading(true);
+        const response = await getProducts(1, 100);
+        setPRODUCTS(response.products);
       } catch (error) {
-        console.log(error);
+        console.error("Error fetching products:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
-    fetchDataFromSanity();
+    fetchProducts();
   }, []);
 
   function addToComparison(product: any) {
@@ -43,7 +47,7 @@ export default function AddProducts() {
   }
 
   function handleClick(index: number) {
-    const newProduct: any = PRODUCTS[index]; // Make sure PRODUCTS is of type Product[]
+    const newProduct = PRODUCTS[index];
     addToComparison(newProduct);
   }
 
@@ -56,7 +60,7 @@ export default function AddProducts() {
 
         <DropdownMenu>
           <DropdownMenuTrigger className="w-full bg-myOrange text-sm text-white font-medium h-10 flex items-center justify-start px-3 rounded-[7px]">
-            Choose a product
+            {isLoading ? "Loading..." : "Choose a product"}
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-[300px] max-h-[400px] overflow-y-auto">
             {PRODUCTS.map((item, index) => (
@@ -78,9 +82,9 @@ export default function AddProducts() {
                     <p className="text-[#3A3A3A] text-[11px] font-semibold">
                       {"$" + item.price}
                     </p>
-                    {item.dicountPercentage > 0 && (
+                    {item.discountPercentage > 0 && (
                       <p className="text-[#B0B0B0] line-through text-[11px]">
-                        - {item.dicountPercentage}%
+                        - {item.discountPercentage}%
                       </p>
                     )}
                   </div>

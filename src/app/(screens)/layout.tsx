@@ -44,7 +44,7 @@ export default function RootLayout({
       </head>
       <body className={poppin.className} >
         <main className="bg-white">
-          <Chatbot />
+          {/* <Chatbot /> */}
           <AuthWrapper>
             <SearchProvider>
               <LoadingIndicator />

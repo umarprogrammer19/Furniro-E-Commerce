@@ -85,7 +85,7 @@ function PaymentSuccessContent() {
 
     if (orderStatus === "pending") {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-green-500 to-blue-600 px-4">
+            <div className="min-h-screen flex items-center justify-center px-4">
                 <Card className="w-full max-w-sm shadow-lg border border-gray-200 bg-white">
                     <CardContent className="flex flex-col items-center py-12">
                         <Loader2 className="h-16 w-16 text-green-500 animate-spin mb-4" />

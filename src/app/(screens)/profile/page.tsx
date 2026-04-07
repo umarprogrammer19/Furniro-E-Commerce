@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useRouter } from "next/navigation";
 import { BASE_URL } from "@/lib/api/baseUrl";
 import Cookies from "js-cookie";
+import { useEffect, useState } from "react";
 
 interface User {
     id: string;
@@ -14,10 +13,17 @@ interface User {
     email: string;
 }
 
+interface OrderProduct {
+    name: string;
+    price: number;
+    quantity: number;
+}
+
 interface Order {
     _id: string;
-    products: { name: string; price: number; quantity: number }[];
+    products: OrderProduct[];
     totalPrice: number;
+    status: string;
     createdAt: string;
 }
 
@@ -57,8 +63,8 @@ export default function Profile() {
                 const userData = await userResponse.json();
                 setUser(userData.user);
 
-                // Fetch user orders (Updated to the correct /orders URL!)
-                const ordersResponse = await fetch(`${BASE_URL}/api/v3/orders`, {
+                // Fetch user orders from the correct endpoint
+                const ordersResponse = await fetch(`${BASE_URL}/api/v3/user-orders`, {
                     method: "GET",
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -85,7 +91,7 @@ export default function Profile() {
         }
 
         loadUserData();
-    }, []); 
+    }, []);
 
     if (error) {
         return (
@@ -143,10 +149,21 @@ export default function Profile() {
                     <ul className="space-y-4">
                         {orders.map((order) => (
                             <li key={order._id} className="p-4 bg-gray-50 rounded-lg shadow-sm">
-                                <div className="flex justify-between items-center">
-                                    <h4 className="font-semibold text-lg">Order ID: {order._id}</h4>
-                                    <span className="text-sm text-gray-500">
-                                        {new Date(order.createdAt).toLocaleDateString()}
+                                <div className="flex justify-between items-center mb-2">
+                                    <div>
+                                        <h4 className="font-semibold text-lg">Order ID: {order._id}</h4>
+                                        <span className="text-sm text-gray-500">
+                                            {new Date(order.createdAt).toLocaleDateString()}
+                                        </span>
+                                    </div>
+                                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                                        order.status === 'completed' 
+                                            ? 'bg-green-100 text-green-800' 
+                                            : order.status === 'shipped'
+                                            ? 'bg-blue-100 text-blue-800'
+                                            : 'bg-yellow-100 text-yellow-800'
+                                    }`}>
+                                        {order.status}
                                     </span>
                                 </div>
                                 <ul className="mt-2 space-y-2">

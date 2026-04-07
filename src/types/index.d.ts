@@ -12,6 +12,7 @@ export interface ICart {
   imageUrl: string;
   quantity: number;
   price: number;
+  stock?: number; // Added to track available stock
 }
 
 export interface ImportedData {
@@ -20,11 +21,12 @@ export interface ImportedData {
   description: string;
   price: number;
   imageUrl: string;
-  category?: strign;
-  dicountPercentage: number;
+  category?: string;
+  discountPercentage: number; // Fixed typo from dicountPercentage
   isNew: boolean;
   quantity?: number;
-  tags: string[]
+  tags: string[];
+  stock: number; // Added stock field
 }
 
 

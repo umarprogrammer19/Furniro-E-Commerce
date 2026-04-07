@@ -1,6 +1,8 @@
 "use client"
 
+import { useEffect } from "react";
 import { useAtom } from "jotai";
+import Image from "next/image";
 import BinIcon from "@/components/icons/bin-icon";
 import CountIncrement from "@/components/sections/count-icrement";
 import EmptyCartState from "@/components/sections/empty-cart-state";
@@ -15,7 +17,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ICart } from "@/types";
-import Image from "next/image";
 import { cartAtom } from "@/lib/storage/jotai";
 import { getSingleProduct } from "@/lib/api/products";
 
@@ -186,6 +187,3 @@ export default function CartList() {
     </section>
   );
 }
-
-// Need to import useEffect
-import { useEffect } from "react";
